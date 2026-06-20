@@ -818,8 +818,6 @@ button {
   background: var(--bg-white);
   transition: transform 0.2s ease;
   overflow: hidden;
-  text-decoration: none;
-  color: inherit;
 }
 
 .cert-row:hover {
@@ -890,6 +888,21 @@ button {
   text-transform: uppercase;
   letter-spacing: 0.5px;
   white-space: nowrap;
+}
+
+.cert-row__linkedin {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--border-light);
+  transition: color 0.2s ease;
+  padding-left: 14px;
+  margin-left: 4px;
+  border-left: 1.5px solid var(--border-light);
+}
+
+.cert-row__linkedin:hover {
+  color: #0A66C2;
 }
 
 /* ============================================
