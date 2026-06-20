@@ -39,15 +39,6 @@ function CountUp({ end, duration = 1500 }) {
 }
 
 export default function Hero() {
-  const [activeDot, setActiveDot] = useState(0);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setActiveDot((prev) => (prev + 1) % 3);
-    }, 5000);
-    return () => clearInterval(interval);
-  }, []);
-
   const handleCTAClick = (e) => {
     e.preventDefault();
     const el = document.getElementById('contact');
@@ -116,13 +107,6 @@ export default function Hero() {
             </div>
           </div>
         </div>
-      </div>
-
-      {/* Slide Indicators */}
-      <div className="hero__indicators">
-        {[0, 1, 2].map((i) => (
-          <div key={i} className={`hero__dot ${activeDot === i ? 'active' : ''}`} />
-        ))}
       </div>
 
       {/* Play Button → Links to GitHub */}
