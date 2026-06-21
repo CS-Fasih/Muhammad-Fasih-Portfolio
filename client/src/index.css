@@ -420,30 +420,7 @@ button {
 }
 
 
-.hero__play {
-  position: absolute;
-  bottom: 14%;
-  right: 8%;
-  z-index: 2;
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  background: var(--accent-red);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: background 0.2s ease;
-}
 
-.hero__play:hover {
-  background: var(--accent-red-hover);
-}
-
-.hero__play svg {
-  fill: var(--text-white);
-  margin-left: 3px;
-}
 
 /* ============================================
    ABOUT SECTION

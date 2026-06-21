@@ -109,18 +109,7 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* Play Button → Links to GitHub */}
-      <a
-        href="https://github.com/CS-Fasih"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="hero__play"
-        aria-label="Visit GitHub profile"
-      >
-        <svg width="20" height="20" viewBox="0 0 24 24">
-          <polygon points="5,3 19,12 5,21" />
-        </svg>
-      </a>
+
     </section>
   );
 }
