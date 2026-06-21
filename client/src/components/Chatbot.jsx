@@ -42,7 +42,7 @@ export default function Chatbot() {
   useEffect(() => {
     if (isOpen) {
       document.body.classList.add('chatbot-open');
-      if (inputRef.current) {
+      if (inputRef.current && window.innerWidth > 768) {
         setTimeout(() => inputRef.current?.focus(), 300);
       }
     } else {
