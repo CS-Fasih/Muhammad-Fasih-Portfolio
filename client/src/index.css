@@ -1887,5 +1887,8 @@ button {
     max-height: 100vh;
     max-height: 100dvh;
   }
-}
 
+  body.chatbot-open {
+    overflow: hidden;
+  }
+}

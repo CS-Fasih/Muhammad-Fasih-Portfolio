@@ -38,11 +38,18 @@ export default function Chatbot() {
     }
   }, [messages, isLoading]);
 
-  // Focus input when chat opens
+  // Focus input when chat opens and manage body scroll
   useEffect(() => {
-    if (isOpen && inputRef.current) {
-      setTimeout(() => inputRef.current?.focus(), 300);
+    if (isOpen) {
+      document.body.classList.add('chatbot-open');
+      if (inputRef.current) {
+        setTimeout(() => inputRef.current?.focus(), 300);
+      }
+    } else {
+      document.body.classList.remove('chatbot-open');
     }
+    
+    return () => document.body.classList.remove('chatbot-open');
   }, [isOpen]);
 
   const sendMessage = async () => {
