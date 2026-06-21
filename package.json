@@ -1,0 +1,23 @@
+{
+  "name": "portfolio",
+  "version": "1.0.0",
+  "description": "A clean, bold, editorial portfolio website built with the MERN stack.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CS-Fasih/Protfolio.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/CS-Fasih/Protfolio/issues"
+  },
+  "homepage": "https://github.com/CS-Fasih/Protfolio#readme",
+  "dependencies": {
+    "@google/generative-ai": "^0.24.1"
+  }
+}

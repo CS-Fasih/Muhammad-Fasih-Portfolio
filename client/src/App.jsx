@@ -7,6 +7,7 @@ import Certifications from './components/Certifications';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
 import ScrollToTop from './components/ScrollToTop';
+import Chatbot from './components/Chatbot';
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
       <Contact />
       <Footer />
       <ScrollToTop />
+      <Chatbot />
     </>
   );
 }
