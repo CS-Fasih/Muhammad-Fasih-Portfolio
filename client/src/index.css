@@ -419,55 +419,8 @@ button {
   margin-top: 4px;
 }
 
-/* ============================================
-   TECH MARQUEE
-   ============================================ */
-.tech-marquee {
-  width: 100%;
-  overflow: hidden;
-  background: var(--bg-dark);
-  padding: 30px 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  display: flex;
-  white-space: nowrap;
-}
 
-.tech-marquee__content {
-  display: flex;
-  animation: scroll-left 30s linear infinite;
-}
 
-.tech-marquee__content:hover {
-  animation-play-state: paused;
-}
-
-.tech-marquee__badge {
-  margin-right: 30px;
-  font-family: var(--font-primary);
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--text-muted);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 10px 28px;
-  border-radius: 50px;
-  background: rgba(255, 255, 255, 0.02);
-  transition: all 0.3s ease;
-  user-select: none;
-}
-
-.tech-marquee__badge:hover {
-  color: var(--text-white);
-  border-color: var(--primary-color);
-  background: rgba(232, 25, 44, 0.1);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(232, 25, 44, 0.2);
-}
-
-@keyframes scroll-left {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
-}
 
 /* ============================================
    ABOUT SECTION
