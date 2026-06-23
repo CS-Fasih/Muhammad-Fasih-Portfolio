@@ -2,7 +2,8 @@
 
 A clean, bold, editorial portfolio website built with the MERN stack.
 
-**Live:** [cs-fasih.github.io/Protfolio](https://cs-fasih.github.io/Protfolio/)
+**Live:** [cs-fasih.github.io/Muhammad-Fasih-Portfolio](https://cs-fasih.github.io/Muhammad-Fasih-Portfolio/)
+
 
 ---
 

@@ -8,15 +8,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/CS-Fasih/Protfolio.git"
+    "url": "git+https://github.com/CS-Fasih/Muhammad-Fasih-Portfolio.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/CS-Fasih/Protfolio/issues"
+    "url": "https://github.com/CS-Fasih/Muhammad-Fasih-Portfolio/issues"
   },
-  "homepage": "https://github.com/CS-Fasih/Protfolio#readme",
+  "homepage": "https://github.com/CS-Fasih/Muhammad-Fasih-Portfolio#readme",
   "dependencies": {
     "@google/generative-ai": "^0.24.1"
   }
