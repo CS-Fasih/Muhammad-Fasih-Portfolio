@@ -297,16 +297,16 @@
 ### Web Development
 8. **Learning Docker** - LinkedIn - Mar 2026 - Skills: Docker Products
 9. **Node.js** - Simplilearn - Sep 2025 - Skills: Back-End Web Development
-10. **Next.js Crash Course** - Udemy - Sep 2025 - Skills: Next.js
-11. **MongoDB - The Complete MongoDB Developers Course** - Udemy - Sep 2025 - Skills: Back-End Web Development, NoSQL
-12. **Introduction to Back-End Development** - Meta - Aug 2023 - Skills: Back-End Web Development
+10. **Next.js Crash Course** - Udemy - Sep 2025 - Skills: Next.js - [Certificate](https://www.udemy.com/certificate/UC-ce3af24d-efa4-4344-94a2-2126678e3dc5/)
+11. **MongoDB - The Complete MongoDB Developers Course** - Udemy - Sep 2025 - Skills: Back-End Web Development, NoSQL - [Certificate](https://www.udemy.com/certificate/UC-794205b5-533c-44e9-9a73-c2f8e4d7ebb6/)
+12. **Introduction to Back-End Development** - Meta - Aug 2023 - Skills: Back-End Web Development - [Certificate](https://www.coursera.org/account/accomplishments/verify/VF5NZQ25HX6F)
 13. **React Basics** - Meta - Aug 2023 - Skills: Front-End Development
-14. **CSS and JavaScript Complete Course For Beginners** - Udemy - Aug 2023 - Skills: JavaScript, Front-End Development
-15. **HTML and CSS in depth** - Meta - Jul 2023 - Skills: Front-End Development
-16. **Programming with JavaScript** - Meta - Jun 2023 - Skills: JavaScript
-17. **Introduction to Front-End Development** - Meta - Jun 2023 - Skills: Front-End Development
-18. **Version Control** - Meta - Jun 2023 - Skills: GitHub
-19. **JavaScript Basics** - University of California, Davis - May 2023 - Skills: JavaScript
+14. **CSS and JavaScript Complete Course For Beginners** - Udemy - Aug 2023 - Skills: JavaScript, Front-End Development - [Certificate](https://www.udemy.com/certificate/UC-47dab481-5600-4d67-986a-207b7c65492d/)
+15. **HTML and CSS in depth** - Meta - Jul 2023 - Skills: Front-End Development - [Certificate](https://www.coursera.org/account/accomplishments/verify/D25QE8EHGL8N)
+16. **Programming with JavaScript** - Meta - Jun 2023 - Skills: JavaScript - [Certificate](https://www.coursera.org/account/accomplishments/verify/KBFZE9JV9PXH)
+17. **Introduction to Front-End Development** - Meta - Jun 2023 - Skills: Front-End Development - [Certificate](https://www.coursera.org/account/accomplishments/verify/768XQQKLZ3C4)
+18. **Version Control** - Meta - Jun 2023 - Skills: GitHub - [Certificate](https://www.coursera.org/account/accomplishments/verify/GRTF79W9RWPL)
+19. **JavaScript Basics** - University of California, Davis - May 2023 - Skills: JavaScript - [Certificate](https://www.coursera.org/account/accomplishments/verify/3UHKZZZ9337E)
 
 ### Algorithms & Data Structures
 20. **Practical Problem Solving with Algorithms** - Frontend Masters - Oct 2025 - Skills: JavaScript, Data Structures & Algorithms
