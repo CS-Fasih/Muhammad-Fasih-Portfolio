@@ -83,6 +83,7 @@ const certifications = [
     date: "Sep 2025",
     skills: ["Next.js"],
     category: "Web Development",
+    url: "https://www.udemy.com/certificate/UC-ce3af24d-efa4-4344-94a2-2126678e3dc5/",
   },
   {
     id: 11,
@@ -91,6 +92,7 @@ const certifications = [
     date: "Sep 2025",
     skills: ["MongoDB", "NoSQL"],
     category: "Web Development",
+    url: "https://www.udemy.com/certificate/UC-794205b5-533c-44e9-9a73-c2f8e4d7ebb6/",
   },
   {
     id: 12,
@@ -99,6 +101,7 @@ const certifications = [
     date: "Aug 2023",
     skills: ["Back-End"],
     category: "Web Development",
+    url: "https://www.coursera.org/account/accomplishments/verify/VF5NZQ25HX6F",
   },
   {
     id: 13,
@@ -115,6 +118,7 @@ const certifications = [
     date: "Aug 2023",
     skills: ["JS", "CSS"],
     category: "Web Development",
+    url: "https://www.udemy.com/certificate/UC-47dab481-5600-4d67-986a-207b7c65492d/",
   },
   {
     id: 15,
@@ -123,6 +127,7 @@ const certifications = [
     date: "Jul 2023",
     skills: ["Frontend"],
     category: "Web Development",
+    url: "https://www.coursera.org/account/accomplishments/verify/D25QE8EHGL8N",
   },
   {
     id: 16,
@@ -131,6 +136,7 @@ const certifications = [
     date: "Jun 2023",
     skills: ["JavaScript"],
     category: "Web Development",
+    url: "https://www.coursera.org/account/accomplishments/verify/KBFZE9JV9PXH",
   },
   {
     id: 17,
@@ -139,6 +145,7 @@ const certifications = [
     date: "Jun 2023",
     skills: ["Frontend"],
     category: "Web Development",
+    url: "https://www.coursera.org/account/accomplishments/verify/768XQQKLZ3C4",
   },
   {
     id: 18,
@@ -147,6 +154,7 @@ const certifications = [
     date: "Jun 2023",
     skills: ["GitHub"],
     category: "Web Development",
+    url: "https://www.coursera.org/account/accomplishments/verify/GRTF79W9RWPL",
   },
   {
     id: 19,
@@ -155,6 +163,7 @@ const certifications = [
     date: "May 2023",
     skills: ["JavaScript"],
     category: "Web Development",
+    url: "https://www.coursera.org/account/accomplishments/verify/3UHKZZZ9337E",
   },
 
   // ── Algorithms & Data Structures ──

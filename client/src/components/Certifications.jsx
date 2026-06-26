@@ -100,7 +100,20 @@ export default function Certifications() {
               />
               <div className="cert-card__content">
                 <div className="cert-card__main">
-                  <h4 className="cert-card__title">{cert.title}</h4>
+                  <h4 className="cert-card__title">
+                    {cert.url ? (
+                      <a 
+                        href={cert.url} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="cert-card__link"
+                      >
+                        {cert.title}
+                      </a>
+                    ) : (
+                      cert.title
+                    )}
+                  </h4>
                   <div className="cert-card__meta">
                     <span
                       className="cert-card__provider"
