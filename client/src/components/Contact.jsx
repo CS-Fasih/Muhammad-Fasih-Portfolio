@@ -69,6 +69,7 @@ export default function Contact() {
             type="text"
             name="name"
             placeholder="Your Name"
+            aria-label="Your Name"
             className="contact__input"
             value={formData.name}
             onChange={handleChange}
@@ -78,6 +79,7 @@ export default function Contact() {
             type="email"
             name="email"
             placeholder="Your Email"
+            aria-label="Your Email"
             className="contact__input"
             value={formData.email}
             onChange={handleChange}
@@ -87,6 +89,7 @@ export default function Contact() {
             type="text"
             name="subject"
             placeholder="Subject"
+            aria-label="Subject"
             className="contact__input full-width"
             value={formData.subject}
             onChange={handleChange}
@@ -95,6 +98,7 @@ export default function Contact() {
           <textarea
             name="message"
             placeholder="Your Message"
+            aria-label="Your Message"
             className="contact__textarea full-width"
             value={formData.message}
             onChange={handleChange}
@@ -105,7 +109,7 @@ export default function Contact() {
               {loading ? 'Sending...' : 'Send Message'}
             </button>
           </div>
-          {status && <div className="contact__success full-width">{status}</div>}
+          {status && <div className="contact__success full-width" role="status" aria-live="polite">{status}</div>}
         </form>
       </div>
     </section>

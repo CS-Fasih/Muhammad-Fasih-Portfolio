@@ -14,7 +14,6 @@ const providerColors = {
   Simplilearn: '#FF6F20',
   DataCamp: '#03EF62',
   'UC Davis': '#002855',
-  'Frontend Masters': '#c02d28',
 };
 
 /* ── Unique categories from data ── */
