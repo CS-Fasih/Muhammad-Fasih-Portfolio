@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 
+const sections = ['home', 'about', 'work', 'certifications', 'contact'];
+
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
 
-  const sections = ['home', 'about', 'work', 'certifications', 'contact'];
+
 
   useEffect(() => {
     const handleScroll = () => {
