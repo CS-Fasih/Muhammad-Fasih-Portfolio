@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { apiRequest } from '../lib/api';
 import {
   activityKey,
   activityShareUrl,
@@ -9,6 +10,25 @@ import {
 
 const COLLAPSIBLE_CONTENT_LENGTH = 260;
 const COLLAPSIBLE_CONTENT_LINES = 4;
+const VISITOR_KEY = 'mf-activity-visitor';
+const LOVED_KEY = 'mf-loved-activities';
+
+function getVisitorId() {
+  let visitorId = window.localStorage.getItem(VISITOR_KEY);
+  if (!visitorId) {
+    visitorId = crypto.randomUUID();
+    window.localStorage.setItem(VISITOR_KEY, visitorId);
+  }
+  return visitorId;
+}
+
+function getLovedActivities() {
+  try {
+    return new Set(JSON.parse(window.localStorage.getItem(LOVED_KEY) || '[]'));
+  } catch {
+    return new Set();
+  }
+}
 
 async function copyText(value) {
   if (navigator.clipboard?.writeText) {
@@ -87,6 +107,9 @@ export default function ActivityCard({ activity, isDeepLinked = false }) {
   const [shareStatus, setShareStatus] = useState('');
   const [isContentExpanded, setIsContentExpanded] = useState(isDeepLinked);
   const cardKey = activityKey(activity);
+  const [loveCount, setLoveCount] = useState(Math.max(0, activity.loves || 0));
+  const [isLoved, setIsLoved] = useState(() => getLovedActivities().has(cardKey));
+  const [isLoving, setIsLoving] = useState(false);
   const anchor = activity.slug || activityKey(activity);
   const occurredAt = activity.occurredAt || activity.activityDate;
   const content = String(activity.content || '');
@@ -122,6 +145,29 @@ export default function ActivityCard({ activity, isDeepLinked = false }) {
       setShareStatus('Link copied');
     } catch {
       setShareStatus('Unable to copy link');
+    }
+  };
+
+  const handleLove = async () => {
+    if (isLoved || isLoving) return;
+    setIsLoving(true);
+    setIsLoved(true);
+    setLoveCount((count) => count + 1);
+
+    try {
+      const result = await apiRequest(`/api/activities/${encodeURIComponent(cardKey)}`, {
+        method: 'POST',
+        body: { visitorId: getVisitorId() },
+      });
+      setLoveCount(result.loves);
+      const loved = getLovedActivities();
+      loved.add(cardKey);
+      window.localStorage.setItem(LOVED_KEY, JSON.stringify([...loved]));
+    } catch {
+      setIsLoved(false);
+      setLoveCount((count) => Math.max(0, count - 1));
+    } finally {
+      setIsLoving(false);
     }
   };
 
@@ -222,7 +268,21 @@ export default function ActivityCard({ activity, isDeepLinked = false }) {
             </span>
           )}
         </p>
-        <div className="activity-card__share-wrap">
+        <div className="activity-card__actions">
+          <button
+            className={`activity-card__love${isLoved ? ' is-loved' : ''}`}
+            type="button"
+            aria-label={isLoved ? `Loved. ${loveCount} loves` : `Love this post. ${loveCount} loves`}
+            aria-pressed={isLoved}
+            disabled={isLoved || isLoving}
+            onClick={handleLove}
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z" />
+            </svg>
+            <span>{loveCount}</span>
+          </button>
+          <div className="activity-card__share-wrap">
           <button className="activity-card__share" type="button" onClick={handleShare}>
             <svg viewBox="0 0 24 24" aria-hidden="true">
               <circle cx="18" cy="5" r="3" />
@@ -235,6 +295,7 @@ export default function ActivityCard({ activity, isDeepLinked = false }) {
           <span className="activity-card__share-status" role="status" aria-live="polite">
             {shareStatus}
           </span>
+          </div>
         </div>
       </footer>
     </article>

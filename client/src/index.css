@@ -2595,6 +2595,50 @@ body.mobile-menu-open .chatbot-bubble {
   gap: 10px;
 }
 
+.activity-card__actions {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.activity-card__love {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 0;
+  background: transparent;
+  color: #444;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.activity-card__love svg {
+  width: 21px;
+  height: 21px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.7;
+  transition: transform 0.2s ease;
+}
+
+.activity-card__love:hover:not(:disabled) {
+  color: var(--accent-red);
+}
+
+.activity-card__love:hover:not(:disabled) svg {
+  transform: scale(1.12);
+}
+
+.activity-card__love.is-loved {
+  color: var(--accent-red);
+}
+
+.activity-card__love.is-loved svg {
+  fill: currentColor;
+}
+
 .activity-card__share {
   display: inline-flex;
   align-items: center;

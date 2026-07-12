@@ -11,6 +11,9 @@ const { destroyImages } = require('../../lib/cloudinary');
 const { connectDB } = require('../../lib/db');
 const { findActivity, serializeActivity } = require('../../lib/activities');
 const { validateActivityInput } = require('../../lib/validation');
+const crypto = require('crypto');
+const ActivityLove = require('../../models/ActivityLove');
+const { Activity } = require('../../lib/activities');
 
 function parseAdminView(req) {
   const value = getSingleQuery(req, 'admin');
@@ -137,18 +140,65 @@ async function deleteActivity(req, res) {
     );
   }
 
+  await ActivityLove.deleteMany({ activity: activity._id });
   await activity.deleteOne();
 
   setNoStore(res);
   return res.status(200).json({ message: 'Activity deleted successfully.' });
 }
 
+async function loveActivity(req, res) {
+  const body = await readJsonBody(req, 4 * 1024);
+  const visitorId = typeof body.visitorId === 'string' ? body.visitorId.trim() : '';
+
+  if (!/^[a-f\d-]{36}$/i.test(visitorId)) {
+    throw new HttpError(400, 'A valid anonymous visitor ID is required.', 'INVALID_VISITOR');
+  }
+
+  await connectDB();
+  const activity = await findActivity(getIdentifier(req), { status: 'published' });
+  if (!activity) {
+    throw new HttpError(404, 'Activity not found.', 'ACTIVITY_NOT_FOUND');
+  }
+
+  const visitorHash = crypto
+    .createHmac('sha256', process.env.JWT_SECRET)
+    .update(visitorId)
+    .digest('hex');
+
+  let created = false;
+  try {
+    const result = await ActivityLove.updateOne(
+      { activity: activity._id, visitorHash },
+      { $setOnInsert: { activity: activity._id, visitorHash } },
+      { upsert: true },
+    );
+    created = result.upsertedCount === 1;
+  } catch (error) {
+    if (error?.code !== 11000) throw error;
+  }
+
+  let loves = activity.loves || 0;
+  if (created) {
+    const updated = await Activity.findByIdAndUpdate(
+      activity._id,
+      { $inc: { loves: 1 } },
+      { new: true, projection: { loves: 1 } },
+    );
+    loves = updated?.loves || loves + 1;
+  }
+
+  setNoStore(res);
+  return res.status(created ? 201 : 200).json({ loved: true, loves });
+}
+
 module.exports = async function handler(req, res) {
   try {
     if (req.method === 'GET') return await getActivity(req, res);
+    if (req.method === 'POST') return await loveActivity(req, res);
     if (req.method === 'PATCH') return await updateActivity(req, res);
     if (req.method === 'DELETE') return await deleteActivity(req, res);
-    return methodNotAllowed(res, ['GET', 'PATCH', 'DELETE']);
+    return methodNotAllowed(res, ['GET', 'POST', 'PATCH', 'DELETE']);
   } catch (error) {
     return handleApiError(res, error);
   }

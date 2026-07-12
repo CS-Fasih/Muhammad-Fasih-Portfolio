@@ -166,6 +166,11 @@ const activitySchema = new mongoose.Schema(
       default: false,
       index: true,
     },
+    loves: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
     // Internal retry queue for cross-provider cleanup. This is deliberately
     // removed by the API serializer and is never accepted from request bodies.
     pendingImageDeletes: {
