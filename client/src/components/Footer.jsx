@@ -31,8 +31,7 @@ export default function Footer() {
               Muhammad <span style={{ color: '#e8192c' }}>Fasih</span>
             </Link>
             <p className="footer__brand-desc">
-              Engineering robust Web & AI systems. Focused on Microservices & Compilers.
-              MERN | .NET | Python | Docker | Redis | C/POSIX
+              Building production-ready Web, AI, and security systems.
             </p>
             <div className="footer__social">
               {/* GitHub */}
@@ -73,39 +72,13 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Projects Column */}
-          <div className="footer__column">
-            <h4>Projects</h4>
-            <ul>
-              <li><a href="https://github.com/GeoExtract" target="_blank" rel="noopener noreferrer">GeoExtract</a></li>
-              <li><a href="https://github.com/CS-Fasih/Smart-Traffic-Signal-Timing" target="_blank" rel="noopener noreferrer">Smart Traffic</a></li>
-              <li><a href="https://github.com/CS-Fasih/OpSecGuard-API" target="_blank" rel="noopener noreferrer">OpSecGuard</a></li>
-              <li><a href="https://github.com/CS-Fasih/Omni-Agent" target="_blank" rel="noopener noreferrer">Omni-Agent</a></li>
-              <li><a href="https://github.com/CS-Fasih/TrueCost" target="_blank" rel="noopener noreferrer">TrueCost</a></li>
-            </ul>
-          </div>
-
-          {/* Expertise Column */}
-          <div className="footer__column">
-            <h4>Expertise</h4>
-            <ul>
-              <li><Link to="/#about" onClick={(event) => handleSectionClick(event, 'about')}>Web Development</Link></li>
-              <li><Link to="/#about" onClick={(event) => handleSectionClick(event, 'about')}>AI & Machine Learning</Link></li>
-              <li><Link to="/#about" onClick={(event) => handleSectionClick(event, 'about')}>Cyber Security</Link></li>
-              <li><Link to="/#about" onClick={(event) => handleSectionClick(event, 'about')}>Compiler Design</Link></li>
-              <li><Link to="/#about" onClick={(event) => handleSectionClick(event, 'about')}>Systems Programming</Link></li>
-            </ul>
-          </div>
-
           {/* Quick Links Column */}
           <div className="footer__column">
             <h4>Quick Links</h4>
             <ul>
-              <li><Link to="/#about" onClick={(event) => handleSectionClick(event, 'about')}>About</Link></li>
               <li><Link to="/#work" onClick={(event) => handleSectionClick(event, 'work')}>Work</Link></li>
-              <li><Link to="/#certifications" onClick={(event) => handleSectionClick(event, 'certifications')}>Certifications</Link></li>
+              <li><Link to="/activity">My Activity</Link></li>
               <li><Link to="/#contact" onClick={(event) => handleSectionClick(event, 'contact')}>Contact</Link></li>
-              <li><a href="https://github.com/CS-Fasih" target="_blank" rel="noopener noreferrer">GitHub</a></li>
             </ul>
           </div>
 
@@ -126,18 +99,6 @@ export default function Footer() {
             <div className="footer__contact-item">
               <div className="footer__contact-icon">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                  <circle cx="12" cy="10" r="3"></circle>
-                </svg>
-              </div>
-              <div className="footer__contact-text">
-                Karachi,<br />Pakistan
-              </div>
-            </div>
-
-            <div className="footer__contact-item">
-              <div className="footer__contact-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <rect x="2" y="4" width="20" height="16" rx="2"></rect>
                   <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
                 </svg>
@@ -147,23 +108,12 @@ export default function Footer() {
               </div>
             </div>
 
-            <div className="footer__contact-item">
-              <div className="footer__contact-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
-                  <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
-                </svg>
-              </div>
-              <div className="footer__contact-text">
-                <a href="https://linkedin.com/in/muhammad-fasih-19f" target="_blank" rel="noopener noreferrer">linkedin.com/in/muhammad-fasih-19f</a>
-              </div>
-            </div>
           </div>
         </div>
 
         {/* Copyright Bar */}
         <div className="footer__copyright">
-          Copyright © {currentYear} Muhammad Fasih. All rights reserved.
+          © {currentYear} Muhammad Fasih.
         </div>
       </div>
     </footer>

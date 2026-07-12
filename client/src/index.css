@@ -1167,24 +1167,25 @@ button {
 .footer {
   background: var(--bg-dark);
   color: var(--text-white);
-  clip-path: polygon(0 8%, 50% 0, 100% 8%, 100% 100%, 0 100%);
-  margin-top: -40px;
-  padding-top: calc(80px + 60px);
-  padding-bottom: 60px;
+  clip-path: polygon(0 6%, 50% 0, 100% 6%, 100% 100%, 0 100%);
+  margin-top: -30px;
+  padding-top: 85px;
+  padding-bottom: 24px;
 }
 
 .footer__grid {
   display: grid;
-  grid-template-columns: 1.5fr 1fr 1fr 1fr 1.5fr;
-  gap: var(--space-md);
+  grid-template-columns: 1.4fr 0.75fr 1.1fr;
+  gap: clamp(36px, 7vw, 96px);
 }
 
 .footer__brand-desc {
+  max-width: 360px;
   font-size: 13px;
   color: var(--footer-desc);
   line-height: 1.7;
-  margin-top: var(--space-sm);
-  margin-bottom: var(--space-md);
+  margin-top: 12px;
+  margin-bottom: 20px;
 }
 
 .footer__social {
@@ -1246,7 +1247,7 @@ button {
   display: flex;
   gap: 12px;
   align-items: flex-start;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
 }
 
 .footer__contact-icon {
@@ -1277,8 +1278,8 @@ button {
 
 .footer__copyright {
   border-top: 1px solid var(--border-dark);
-  padding-top: 24px;
-  margin-top: var(--space-lg);
+  padding-top: 16px;
+  margin-top: 24px;
   text-align: center;
   font-size: 12px;
   color: var(--copyright);
@@ -1441,6 +1442,17 @@ button {
 
   .footer__grid {
     grid-template-columns: repeat(2, 1fr);
+  }
+
+  .footer__contact {
+    display: grid;
+    grid-column: 1 / -1;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 24px;
+  }
+
+  .footer__contact .footer__title {
+    grid-column: 1 / -1;
   }
 
   .about__intro {
@@ -1623,12 +1635,28 @@ button {
 
   .footer {
     clip-path: polygon(0 4%, 50% 0, 100% 4%, 100% 100%, 0 100%);
-    padding-top: calc(60px + 30px);
+    padding-top: 58px;
+    padding-bottom: 20px;
   }
 
   .footer__grid {
     grid-template-columns: 1fr;
-    gap: var(--space-lg);
+    gap: 24px;
+  }
+
+  .footer__column ul {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 20px;
+  }
+
+  .footer__contact {
+    display: block;
+    grid-column: auto;
+  }
+
+  .footer__copyright {
+    margin-top: 22px;
   }
 
   .works {
