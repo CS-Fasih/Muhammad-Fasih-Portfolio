@@ -1261,6 +1261,8 @@ button {
   z-index: 999;
   padding: var(--space-md);
   padding-bottom: max(var(--space-md), env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
   overflow-y: auto;
   overscroll-behavior-y: contain;
   transition: right 0.3s ease;
@@ -2010,6 +2012,12 @@ body.mobile-menu-open {
   overflow: hidden;
 }
 
+body.mobile-menu-open .chatbot-bubble {
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
 /* ============================================
    NAVBAR — ACTIVITY CTA
    ============================================ */
@@ -2048,7 +2056,9 @@ body.mobile-menu-open {
 }
 
 .mobile-nav__links {
-  min-height: 100%;
+  flex: 1;
+  min-height: 0;
+  gap: clamp(12px, 2.5dvh, var(--space-md));
 }
 
 .mobile-nav__activity-cta {
