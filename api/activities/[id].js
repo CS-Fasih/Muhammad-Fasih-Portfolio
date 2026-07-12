@@ -150,6 +150,7 @@ async function deleteActivity(req, res) {
 async function loveActivity(req, res) {
   const body = await readJsonBody(req, 4 * 1024);
   const visitorId = typeof body.visitorId === 'string' ? body.visitorId.trim() : '';
+  const action = body.action === 'unlike' ? 'unlike' : 'love';
 
   if (!/^[a-f\d-]{36}$/i.test(visitorId)) {
     throw new HttpError(400, 'A valid anonymous visitor ID is required.', 'INVALID_VISITOR');
@@ -165,6 +166,26 @@ async function loveActivity(req, res) {
     .createHmac('sha256', process.env.JWT_SECRET)
     .update(visitorId)
     .digest('hex');
+
+  if (action === 'unlike') {
+    const removed = await ActivityLove.deleteOne({
+      activity: activity._id,
+      visitorHash,
+    });
+    let loves = activity.loves || 0;
+
+    if (removed.deletedCount === 1) {
+      const updated = await Activity.findByIdAndUpdate(
+        activity._id,
+        [{ $set: { loves: { $max: [0, { $subtract: [{ $ifNull: ['$loves', 0] }, 1] }] } } }],
+        { new: true, projection: { loves: 1 } },
+      );
+      loves = updated?.loves || 0;
+    }
+
+    setNoStore(res);
+    return res.status(200).json({ loved: false, loves });
+  }
 
   let created = false;
   try {

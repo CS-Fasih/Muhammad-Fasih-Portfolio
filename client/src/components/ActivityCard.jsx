@@ -149,23 +149,26 @@ export default function ActivityCard({ activity, isDeepLinked = false }) {
   };
 
   const handleLove = async () => {
-    if (isLoved || isLoving) return;
+    if (isLoving) return;
+    const wasLoved = isLoved;
+    const nextLoved = !wasLoved;
     setIsLoving(true);
-    setIsLoved(true);
-    setLoveCount((count) => count + 1);
+    setIsLoved(nextLoved);
+    setLoveCount((count) => Math.max(0, count + (nextLoved ? 1 : -1)));
 
     try {
       const result = await apiRequest(`/api/activities/${encodeURIComponent(cardKey)}`, {
         method: 'POST',
-        body: { visitorId: getVisitorId() },
+        body: { visitorId: getVisitorId(), action: nextLoved ? 'love' : 'unlike' },
       });
       setLoveCount(result.loves);
       const loved = getLovedActivities();
-      loved.add(cardKey);
+      if (result.loved) loved.add(cardKey);
+      else loved.delete(cardKey);
       window.localStorage.setItem(LOVED_KEY, JSON.stringify([...loved]));
     } catch {
-      setIsLoved(false);
-      setLoveCount((count) => Math.max(0, count - 1));
+      setIsLoved(wasLoved);
+      setLoveCount((count) => Math.max(0, count + (nextLoved ? -1 : 1)));
     } finally {
       setIsLoving(false);
     }
@@ -274,7 +277,7 @@ export default function ActivityCard({ activity, isDeepLinked = false }) {
             type="button"
             aria-label={isLoved ? `Loved. ${loveCount} loves` : `Love this post. ${loveCount} loves`}
             aria-pressed={isLoved}
-            disabled={isLoved || isLoving}
+            disabled={isLoving}
             onClick={handleLove}
           >
             <svg viewBox="0 0 24 24" aria-hidden="true">

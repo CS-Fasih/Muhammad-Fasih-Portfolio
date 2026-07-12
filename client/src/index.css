@@ -2607,7 +2607,7 @@ body.mobile-menu-open .chatbot-bubble {
   gap: 7px;
   padding: 8px 0;
   background: transparent;
-  color: #444;
+  color: var(--accent-red-hover);
   font-size: 12px;
   font-weight: 700;
 }
@@ -2632,7 +2632,7 @@ body.mobile-menu-open .chatbot-bubble {
 }
 
 .activity-card__love.is-loved {
-  color: var(--accent-red);
+  color: var(--accent-red-hover);
 }
 
 .activity-card__love.is-loved svg {
@@ -3026,13 +3026,18 @@ body.mobile-menu-open .chatbot-bubble {
     padding-inline: 18px;
   }
 
+  .activity-card__actions {
+    align-items: center;
+  }
+
   .activity-card__share-wrap {
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 0;
+    display: block;
   }
 
   .activity-card__share-status {
+    position: absolute;
+    top: 100%;
+    right: 0;
     min-height: 15px;
     text-align: right;
   }
@@ -3055,13 +3060,16 @@ body.mobile-menu-open .chatbot-bubble {
 @media (max-width: 480px) {
   .activity-card__footer {
     flex-direction: column;
+    gap: 6px;
   }
 
-  .activity-card__share-wrap {
-    align-items: flex-start;
+  .activity-card__actions {
+    gap: 22px;
   }
 
   .activity-card__share-status {
+    right: auto;
+    left: 0;
     text-align: left;
   }
 }
