@@ -7,6 +7,9 @@ import {
   optimizedCloudinaryUrl,
 } from '../lib/activity';
 
+const COLLAPSIBLE_CONTENT_LENGTH = 260;
+const COLLAPSIBLE_CONTENT_LINES = 4;
+
 async function copyText(value) {
   if (navigator.clipboard?.writeText) {
     await navigator.clipboard.writeText(value);
@@ -82,8 +85,15 @@ function ActivityImages({ images, title }) {
 
 export default function ActivityCard({ activity, isDeepLinked = false }) {
   const [shareStatus, setShareStatus] = useState('');
+  const [isContentExpanded, setIsContentExpanded] = useState(isDeepLinked);
+  const cardKey = activityKey(activity);
   const anchor = activity.slug || activityKey(activity);
   const occurredAt = activity.occurredAt || activity.activityDate;
+  const content = String(activity.content || '');
+  const contentLines = content.split('\n');
+  const canToggleContent = content.length > COLLAPSIBLE_CONTENT_LENGTH
+    || contentLines.length > COLLAPSIBLE_CONTENT_LINES;
+  const contentId = `activity-content-${cardKey}`;
   const updated = activity.updatedAt && activity.createdAt
     && new Date(activity.updatedAt).getTime() > new Date(activity.createdAt).getTime() + 1000;
 
@@ -120,7 +130,7 @@ export default function ActivityCard({ activity, isDeepLinked = false }) {
       className={`activity-card${activity.featured ? ' activity-card--featured' : ''}${isDeepLinked ? ' activity-card--targeted' : ''}`}
       id={anchor ? String(anchor) : undefined}
       tabIndex={isDeepLinked ? -1 : undefined}
-      aria-labelledby={`activity-title-${activityKey(activity)}`}
+      aria-labelledby={`activity-title-${cardKey}`}
     >
       <header className="activity-card__header">
         <div className="activity-card__avatar" aria-hidden="true">MF</div>
@@ -142,17 +152,32 @@ export default function ActivityCard({ activity, isDeepLinked = false }) {
       </header>
 
       <div className="activity-card__body">
-        <h2 className="activity-card__title" id={`activity-title-${activityKey(activity)}`}>
+        <h2 className="activity-card__title" id={`activity-title-${cardKey}`}>
           {activity.title}
         </h2>
-        <p className="activity-card__content">
-          {String(activity.content || '').split('\n').map((line, index, lines) => (
+        <p
+          className={`activity-card__content${canToggleContent && !isContentExpanded ? ' is-collapsed' : ''}`}
+          id={contentId}
+        >
+          {contentLines.map((line, index, lines) => (
             <span key={`${index}-${line.slice(0, 20)}`}>
               {line}
               {index < lines.length - 1 && <br />}
             </span>
           ))}
         </p>
+        {canToggleContent && (
+          <button
+            className="activity-card__content-toggle"
+            type="button"
+            aria-controls={contentId}
+            aria-expanded={isContentExpanded}
+            onClick={() => setIsContentExpanded((expanded) => !expanded)}
+          >
+            {isContentExpanded ? 'Show less' : 'Show more'}
+            <span aria-hidden="true">{isContentExpanded ? ' ↑' : ' ↓'}</span>
+          </button>
+        )}
 
         {(activity.eventName || activity.location) && (
           <dl className="activity-card__details">

@@ -59,6 +59,16 @@ function normalizeServerErrors(details) {
   return errors;
 }
 
+function defaultImageAlt(file, title, position) {
+  const fileDescription = file.name
+    .replace(/\.[^.]+$/, '')
+    .replace(/[-_]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+  const subject = title.trim() || fileDescription || 'Activity';
+  return `${subject} — image ${position}`.slice(0, 200);
+}
+
 async function uploadToCloudinary(pendingImage) {
   const signature = await apiRequest('/api/uploads/sign', {
     method: 'POST',
@@ -120,6 +130,7 @@ export default function ActivityForm({
   const [formMessage, setFormMessage] = useState('');
   const [announcement, setAnnouncement] = useState('');
   const [submitStatus, setSubmitStatus] = useState('idle');
+  const [isDraggingImages, setIsDraggingImages] = useState(false);
   const previewUrls = useRef(new Set());
 
   useEffect(() => {
@@ -175,55 +186,87 @@ export default function ActivityForm({
     setAnnouncement('Selected image removed.');
   };
 
-  const handleFiles = (event) => {
-    const selectedFiles = Array.from(event.target.files || []);
-    event.target.value = '';
+  const addFiles = (files) => {
+    const selectedFiles = Array.from(files || []);
     if (selectedFiles.length === 0) return;
 
     const availableSlots = MAX_ACTIVITY_IMAGES - imageCount;
-    if (selectedFiles.length > availableSlots) {
-      setFieldErrors((current) => ({
-        ...current,
-        images: `You can attach up to ${MAX_ACTIVITY_IMAGES} images. Remove an image before adding more.`,
-      }));
-      return;
-    }
+    const seenFiles = new Set(pendingImages.map(({ file }) => (
+      `${file.name}:${file.size}:${file.lastModified}`
+    )));
+    const uniqueFiles = [];
+    let duplicateCount = 0;
 
-    const invalidType = selectedFiles.find((file) => !ACCEPTED_IMAGE_TYPES.includes(file.type));
-    if (invalidType) {
-      setFieldErrors((current) => ({
-        ...current,
-        images: `${invalidType.name} is not supported. Use JPEG, PNG, WebP, or GIF.`,
-      }));
-      return;
-    }
+    selectedFiles.forEach((file) => {
+      const key = `${file.name}:${file.size}:${file.lastModified}`;
+      if (seenFiles.has(key)) {
+        duplicateCount += 1;
+        return;
+      }
+      seenFiles.add(key);
+      uniqueFiles.push(file);
+    });
 
-    const oversized = selectedFiles.find((file) => file.size > MAX_IMAGE_BYTES);
-    if (oversized) {
-      setFieldErrors((current) => ({
-        ...current,
-        images: `${oversized.name} is ${humanFileSize(oversized.size)}. Each image must be 5 MB or smaller.`,
-      }));
+    const unsupportedFiles = uniqueFiles.filter(
+      (file) => !ACCEPTED_IMAGE_TYPES.includes(file.type),
+    );
+    const oversizedFiles = uniqueFiles.filter((file) => file.size > MAX_IMAGE_BYTES);
+    const validFiles = uniqueFiles.filter((file) => (
+      ACCEPTED_IMAGE_TYPES.includes(file.type) && file.size <= MAX_IMAGE_BYTES
+    ));
+    const filesToAdd = validFiles.slice(0, availableSlots);
+    const capacitySkipped = Math.max(validFiles.length - filesToAdd.length, 0);
+
+    if (filesToAdd.length === 0) {
+      const message = availableSlots === 0
+        ? `You can attach up to ${MAX_ACTIVITY_IMAGES} images. Remove an image before adding more.`
+        : 'No supported images were selected. Use JPEG, PNG, WebP, or GIF files up to 5 MB each.';
+      setFieldErrors((current) => ({ ...current, images: message }));
+      setAnnouncement(message);
       return;
     }
 
     const timestamp = Date.now();
-    const additions = selectedFiles.map((file, index) => {
+    const additions = filesToAdd.map((file, index) => {
       const previewUrl = URL.createObjectURL(file);
       previewUrls.current.add(previewUrl);
       return {
         id: `${timestamp}-${index}-${file.name}`,
         file,
         previewUrl,
-        alt: '',
+        alt: defaultImageAlt(file, values.title, imageCount + index + 1),
       };
     });
 
     setPendingImages((current) => [...current, ...additions]);
-    setFieldErrors((current) => ({ ...current, images: '' }));
+    const issues = [];
+    if (unsupportedFiles.length > 0) {
+      issues.push(`${unsupportedFiles.length} unsupported ${unsupportedFiles.length === 1 ? 'file was' : 'files were'} skipped.`);
+    }
+    if (oversizedFiles.length > 0) {
+      issues.push(`${oversizedFiles.length} ${oversizedFiles.length === 1 ? 'file was' : 'files were'} over ${humanFileSize(MAX_IMAGE_BYTES)} and skipped.`);
+    }
+    if (duplicateCount > 0) {
+      issues.push(`${duplicateCount} duplicate ${duplicateCount === 1 ? 'image was' : 'images were'} skipped.`);
+    }
+    if (capacitySkipped > 0) {
+      issues.push(`Only the first ${availableSlots} images that fit the ${MAX_ACTIVITY_IMAGES}-image limit were added.`);
+    }
+    setFieldErrors((current) => ({ ...current, images: issues.join(' ') }));
     setAnnouncement(
-      `${additions.length} ${additions.length === 1 ? 'image is' : 'images are'} ready to upload when you save.`,
+      `${additions.length} ${additions.length === 1 ? 'image was' : 'images were'} selected together and are ready to upload when you save.${issues.length > 0 ? ` ${issues.join(' ')}` : ''}`,
     );
+  };
+
+  const handleFiles = (event) => {
+    addFiles(event.target.files);
+    event.target.value = '';
+  };
+
+  const handleImageDrop = (event) => {
+    event.preventDefault();
+    setIsDraggingImages(false);
+    if (!isBusy) addFiles(event.dataTransfer.files);
   };
 
   const validate = () => {
@@ -567,7 +610,10 @@ export default function ActivityForm({
         tabIndex={fieldErrors.images ? -1 : undefined}
       >
         <legend>Images <span>{imageCount}/{MAX_ACTIVITY_IMAGES}</span></legend>
-        <p>JPEG, PNG, WebP, or GIF. Maximum 5 MB per image. Alternative text is required.</p>
+        <p>
+          Select several images together. On desktop use Ctrl/Shift, or drag files here;
+          on mobile choose Select multiple in your gallery. Maximum 5 MB per image.
+        </p>
 
         {(values.images.length > 0 || pendingImages.length > 0) && (
           <ul className="activity-form__image-list">
@@ -617,8 +663,23 @@ export default function ActivityForm({
         )}
 
         {imageCount < MAX_ACTIVITY_IMAGES && (
-          <label className="activity-form__file-button" htmlFor="activity-images">
-            Select Images
+          <label
+            className={`activity-form__file-button${isDraggingImages ? ' is-dragging' : ''}`}
+            htmlFor="activity-images"
+            onDragEnter={(event) => {
+              event.preventDefault();
+              if (!isBusy) setIsDraggingImages(true);
+            }}
+            onDragOver={(event) => event.preventDefault()}
+            onDragLeave={(event) => {
+              if (!event.currentTarget.contains(event.relatedTarget)) {
+                setIsDraggingImages(false);
+              }
+            }}
+            onDrop={handleImageDrop}
+          >
+            <span>Select Images Together</span>
+            <small>{MAX_ACTIVITY_IMAGES - imageCount} remaining · drag and drop supported</small>
             <input
               id="activity-images"
               type="file"

@@ -424,7 +424,7 @@
 
 ## 👤 About Me
 
-My name is **Muhammad Fasih**. I'm a final-year Bachelor of Computer Science student at **Dawood University of Engineering and Technology (DUET), Karachi**, graduating in **2026** (Roll No: 22F-BSCS-19). I work as an **AI/ML Engineer** and **Full-Stack Developer**, with a strong focus on computer vision, LLM/VLM integration, and building production-ready web applications.
+My name is **Muhammad Fasih**. I'm a fresh Bachelor of Science in Computer Science graduate from **Dawood University of Engineering and Technology (DUET), Karachi**. I completed all eight semesters and graduated in **2026** (Roll No: 22F-BSCS-19). I work as an **AI/ML Engineer** and **Full-Stack Developer**, with a strong focus on computer vision, LLM/VLM integration, and building production-ready web applications.
 
 I freelance on **Fiverr** under the handle **cs_fasih**, offering services in AI/ML, Python, and MERN stack development. I'm actively looking for onsite, Karachi-based, fresher-friendly roles in AI/ML and full-stack development.
 
@@ -434,7 +434,8 @@ I freelance on **Fiverr** under the handle **cs_fasih**, offering services in AI
 
 - **Degree:** Bachelor of Science in Computer Science (BSCS)
 - **University:** Dawood University of Engineering and Technology (DUET), Karachi
-- **Expected Graduation:** 2026
+- **Graduation Year:** 2026
+- **Status:** Graduated; all eight semesters completed
 - **Roll No:** 22F-BSCS-19
 - **Relevant Coursework:** Embedded Systems, Evolutionary Computation, Organizational Behavior, Introduction to Data Science, Database Systems, Computer Vision
 
@@ -614,7 +615,7 @@ Actively looking for **onsite, Karachi-based, fresher-friendly** positions.
 ## 💬 How to Talk to Me (Chatbot Personality Notes)
 
 - I prefer **direct, no-nonsense communication** — no sugarcoating.
-- I'm a CS student and developer, so technical conversations are very welcome.
+- I'm a fresh CS graduate and developer, so technical conversations are very welcome.
 - I enjoy discussing AI/ML, MERN stack architecture, chess strategy, and horror films.
 - Feel free to ask me about any of my projects, my tech stack, or my availability for freelance/job opportunities.
 
@@ -631,7 +632,7 @@ Actively looking for **onsite, Karachi-based, fresher-friendly** positions.
 * **Age:** 23
 * **Location:** Karachi, Pakistan
 * **Languages Spoken:** English, Urdu
-* **Current Status:** Completed 8 semesters of Bachelor's degree; actively transitioning into the professional tech industry.
+* **Current Status:** Fresh Computer Science graduate with all eight semesters completed; actively transitioning into the professional tech industry.
 * **Professional Objective:** Actively seeking entry-level, internship, or junior roles in **Backend Development, AI/ML Engineering, and Python/Software Development** within a dedicated software house environment. 
 * **Career Boundary:** Strictly focused on production-level engineering, software architecture, and AI development. Deliberately pivoting away from teaching or purely academic roles to focus on hands-on software house experience.
 

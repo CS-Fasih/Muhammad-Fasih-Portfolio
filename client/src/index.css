@@ -2414,6 +2414,33 @@ body.mobile-menu-open .chatbot-bubble {
   overflow-wrap: anywhere;
 }
 
+.activity-card__content.is-collapsed {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 5;
+}
+
+.activity-card__content-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 10px;
+  padding: 3px 0;
+  border-bottom: 1px solid currentColor;
+  background: transparent;
+  color: var(--accent-red);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.9px;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+.activity-card__content-toggle:hover {
+  color: var(--accent-red-hover);
+}
+
 .activity-card__details {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -2456,6 +2483,7 @@ body.mobile-menu-open .chatbot-bubble {
 .activity-card__images--3,
 .activity-card__images--4 {
   grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-auto-rows: clamp(170px, 22vw, 220px);
 }
 
 .activity-card__images--3 .activity-card__image-link:first-child {
@@ -2464,20 +2492,19 @@ body.mobile-menu-open .chatbot-bubble {
 
 .activity-card__image-link {
   display: block;
-  min-height: 220px;
+  min-height: 0;
+  height: 100%;
   overflow: hidden;
   background: #ddd;
 }
 
 .activity-card__images--1 .activity-card__image-link {
-  min-height: 300px;
-  max-height: 560px;
+  height: clamp(280px, 46vw, 480px);
 }
 
 .activity-card__image {
   width: 100%;
   height: 100%;
-  min-height: inherit;
   object-fit: cover;
   transition: transform 0.35s ease;
 }
@@ -2908,9 +2935,18 @@ body.mobile-menu-open .chatbot-bubble {
     margin-inline: -18px;
   }
 
-  .activity-card__image-link,
+  .activity-card__images--2,
+  .activity-card__images--3,
+  .activity-card__images--4 {
+    grid-auto-rows: clamp(112px, 34vw, 170px);
+  }
+
+  .activity-card__image-link {
+    min-height: 0;
+  }
+
   .activity-card__images--1 .activity-card__image-link {
-    min-height: 210px;
+    height: clamp(210px, 68vw, 340px);
   }
 
   .activity-card__footer {
@@ -2945,16 +2981,6 @@ body.mobile-menu-open .chatbot-bubble {
 }
 
 @media (max-width: 480px) {
-  .activity-card__images--2,
-  .activity-card__images--3,
-  .activity-card__images--4 {
-    grid-template-columns: 1fr;
-  }
-
-  .activity-card__images--3 .activity-card__image-link:first-child {
-    grid-row: auto;
-  }
-
   .activity-card__footer {
     flex-direction: column;
   }
@@ -3276,12 +3302,16 @@ body.mobile-menu-open .chatbot-bubble {
 
 .activity-form__file-button {
   position: relative;
-  display: inline-flex;
-  min-height: 42px;
+  display: flex;
+  width: 100%;
+  min-height: 86px;
+  flex-direction: column;
+  gap: 5px;
   align-items: center;
   justify-content: center;
   padding: 10px 20px;
   border: 1px dashed #aaa;
+  background: #fafafa;
   color: #444;
   cursor: pointer;
   font-size: 10px;
@@ -3293,6 +3323,21 @@ body.mobile-menu-open .chatbot-bubble {
 .activity-form__file-button:hover {
   border-color: var(--accent-red);
   color: var(--accent-red);
+}
+
+.activity-form__file-button.is-dragging {
+  border-color: var(--accent-red);
+  background: #fff1f2;
+  color: var(--accent-red);
+}
+
+.activity-form__file-button small {
+  color: #777;
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.2px;
+  text-align: center;
+  text-transform: none;
 }
 
 .activity-form__file-button:focus-within {
