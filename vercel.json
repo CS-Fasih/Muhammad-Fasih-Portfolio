@@ -1,9 +1,14 @@
 {
-  "installCommand": "npm install && cd client && npm ci",
+  "installCommand": "npm ci && cd client && npm ci",
   "buildCommand": "cd client && npm run build",
   "outputDirectory": "client/dist",
   "rewrites": [
-    { "source": "/api/(.*)", "destination": "/api/$1" }
+    {
+      "source": "/api/activities/:id",
+      "destination": "/api/activities/[id]?id=:id"
+    },
+    { "source": "/api/(.*)", "destination": "/api/$1" },
+    { "source": "/(.*)", "destination": "/index.html" }
   ],
   "headers": [
     {

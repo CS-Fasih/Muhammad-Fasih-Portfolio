@@ -5,6 +5,9 @@ node_modules/
 
 # Production build
 client/dist/
+.vercel/node/
+.vercel/output/
+.vercel/.env.*.local
 
 # Environment variables
 .env

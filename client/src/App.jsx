@@ -1,26 +1,26 @@
-import Navbar from './components/Navbar';
-import Hero from './components/Hero';
-import About from './components/About';
-import Works from './components/Works';
-import OtherProjects from './components/OtherProjects';
-import Certifications from './components/Certifications';
-import Contact from './components/Contact';
-import Footer from './components/Footer';
-import Chatbot from './components/Chatbot';
+import { Navigate, Route, Routes } from 'react-router-dom';
+import ProtectedRoute from './components/ProtectedRoute';
+import HomePage from './pages/HomePage';
+import ActivityPage from './pages/ActivityPage';
+import AdminLoginPage from './pages/AdminLoginPage';
+import ActivityAdminPage from './pages/ActivityAdminPage';
 
 function App() {
   return (
-    <>
-      <Navbar />
-      <Hero />
-      <About />
-      <Works />
-      <OtherProjects />
-      <Certifications />
-      <Contact />
-      <Footer />
-      <Chatbot />
-    </>
+    <Routes>
+      <Route path="/" element={<HomePage />} />
+      <Route path="/activity" element={<ActivityPage />} />
+      <Route path="/admin/login" element={<AdminLoginPage />} />
+      <Route
+        path="/admin/activity"
+        element={(
+          <ProtectedRoute>
+            <ActivityAdminPage />
+          </ProtectedRoute>
+        )}
+      />
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
   );
 }
 

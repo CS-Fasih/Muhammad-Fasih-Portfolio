@@ -1,9 +1,25 @@
 import useScrollReveal from '../hooks/useScrollReveal';
+import { Link, useLocation } from 'react-router-dom';
 
 export default function Footer() {
   const sectionRef = useScrollReveal();
+  const location = useLocation();
 
   const currentYear = new Date().getFullYear();
+
+  const handleSectionClick = (event, sectionId) => {
+    if (location.pathname !== '/') return;
+
+    const section = document.getElementById(sectionId);
+    if (!section) return;
+
+    event.preventDefault();
+    const navbarHeight = document.getElementById('navbar')?.offsetHeight || 70;
+    window.scrollTo({
+      top: Math.max(section.offsetTop - navbarHeight, 0),
+      behavior: 'smooth',
+    });
+  };
 
   return (
     <footer className="footer" ref={sectionRef}>
@@ -11,9 +27,9 @@ export default function Footer() {
         <div className="footer__grid reveal">
           {/* Brand Column */}
           <div className="footer__brand">
-            <a href="#home" className="navbar__logo" style={{ fontSize: '20px', fontWeight: 700, color: '#fff' }}>
+            <Link to="/#home" onClick={(event) => handleSectionClick(event, 'home')} className="navbar__logo" style={{ fontSize: '20px', fontWeight: 700, color: '#fff' }}>
               Muhammad <span style={{ color: '#e8192c' }}>Fasih</span>
-            </a>
+            </Link>
             <p className="footer__brand-desc">
               Engineering robust Web & AI systems. Focused on Microservices & Compilers.
               MERN | .NET | Python | Docker | Redis | C/POSIX
@@ -73,11 +89,11 @@ export default function Footer() {
           <div className="footer__column">
             <h4>Expertise</h4>
             <ul>
-              <li><a href="#about">Web Development</a></li>
-              <li><a href="#about">AI & Machine Learning</a></li>
-              <li><a href="#about">Cyber Security</a></li>
-              <li><a href="#about">Compiler Design</a></li>
-              <li><a href="#about">Systems Programming</a></li>
+              <li><Link to="/#about" onClick={(event) => handleSectionClick(event, 'about')}>Web Development</Link></li>
+              <li><Link to="/#about" onClick={(event) => handleSectionClick(event, 'about')}>AI & Machine Learning</Link></li>
+              <li><Link to="/#about" onClick={(event) => handleSectionClick(event, 'about')}>Cyber Security</Link></li>
+              <li><Link to="/#about" onClick={(event) => handleSectionClick(event, 'about')}>Compiler Design</Link></li>
+              <li><Link to="/#about" onClick={(event) => handleSectionClick(event, 'about')}>Systems Programming</Link></li>
             </ul>
           </div>
 
@@ -85,10 +101,10 @@ export default function Footer() {
           <div className="footer__column">
             <h4>Quick Links</h4>
             <ul>
-              <li><a href="#about">About</a></li>
-              <li><a href="#work">Work</a></li>
-              <li><a href="#certifications">Certifications</a></li>
-              <li><a href="#contact">Contact</a></li>
+              <li><Link to="/#about" onClick={(event) => handleSectionClick(event, 'about')}>About</Link></li>
+              <li><Link to="/#work" onClick={(event) => handleSectionClick(event, 'work')}>Work</Link></li>
+              <li><Link to="/#certifications" onClick={(event) => handleSectionClick(event, 'certifications')}>Certifications</Link></li>
+              <li><Link to="/#contact" onClick={(event) => handleSectionClick(event, 'contact')}>Contact</Link></li>
               <li><a href="https://github.com/CS-Fasih" target="_blank" rel="noopener noreferrer">GitHub</a></li>
             </ul>
           </div>
