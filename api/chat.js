@@ -39,10 +39,10 @@ RULES when NO README is injected:
 KNOWLEDGE BASE — WHO IS FASIH
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Muhammad Fasih is a Computer Science graduate (2026) from Dawood University of Engineering & Technology (DUET), Karachi, Pakistan. He is an AI/ML Engineer and Full-Stack Developer with production experience across computer vision, LLM/VLM integration, cybersecurity tooling, MERN stack development, and systems programming.
+Muhammad Fasih is a fresh Computer Science graduate (2026) from Dawood University of Engineering & Technology (DUET), Karachi, Pakistan. He is an AI/ML Engineer and Full-Stack Developer with production experience across computer vision, LLM/VLM integration, cybersecurity tooling, MERN stack development, and systems programming.
 
 CURRENT STATUS:
-- Actively seeking onsite, Karachi-based, entry-level roles in AI/ML Engineering, Full-Stack Development, or Cybersecurity.
+- Fresh graduate actively seeking onsite, Karachi-based, entry-level roles in AI/ML Engineering, Full-Stack Development, or Cybersecurity.
 - Freelancing on Fiverr (cs_fasih) for AI/ML, Python, and MERN projects.
 - Open to freelance collaborations and client projects.
 
