@@ -1256,9 +1256,13 @@ button {
   right: -100%;
   width: 280px;
   height: calc(100vh - var(--nav-height));
+  height: calc(100dvh - var(--nav-height));
   background: var(--bg-white);
   z-index: 999;
   padding: var(--space-md);
+  padding-bottom: max(var(--space-md), env(safe-area-inset-bottom));
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
   transition: right 0.3s ease;
   box-shadow: -4px 0 20px rgba(0, 0, 0, 0.1);
 }
@@ -1296,6 +1300,7 @@ button {
   left: 0;
   width: 100%;
   height: calc(100vh - var(--nav-height));
+  height: calc(100dvh - var(--nav-height));
   background: rgba(0, 0, 0, 0.4);
   z-index: 998;
 }
