@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { apiRequest } from '../lib/api';
 import {
   activityKey,
@@ -23,6 +23,11 @@ function getVisitorId() {
 }
 
 function getLovedActivities() {
+  if (!window.localStorage.getItem(VISITOR_KEY)) {
+    window.localStorage.removeItem(LOVED_KEY);
+    return new Set();
+  }
+
   try {
     return new Set(JSON.parse(window.localStorage.getItem(LOVED_KEY) || '[]'));
   } catch {
@@ -110,6 +115,7 @@ export default function ActivityCard({ activity, isDeepLinked = false }) {
   const [loveCount, setLoveCount] = useState(Math.max(0, activity.loves || 0));
   const [isLoved, setIsLoved] = useState(() => getLovedActivities().has(cardKey));
   const [isLoving, setIsLoving] = useState(false);
+  const loveRequestInFlight = useRef(false);
   const anchor = activity.slug || activityKey(activity);
   const occurredAt = activity.occurredAt || activity.activityDate;
   const content = String(activity.content || '');
@@ -149,7 +155,8 @@ export default function ActivityCard({ activity, isDeepLinked = false }) {
   };
 
   const handleLove = async () => {
-    if (isLoving) return;
+    if (loveRequestInFlight.current) return;
+    loveRequestInFlight.current = true;
     const wasLoved = isLoved;
     const nextLoved = !wasLoved;
     setIsLoving(true);
@@ -161,6 +168,7 @@ export default function ActivityCard({ activity, isDeepLinked = false }) {
         method: 'POST',
         body: { visitorId: getVisitorId(), action: nextLoved ? 'love' : 'unlike' },
       });
+      setIsLoved(result.loved);
       setLoveCount(result.loves);
       const loved = getLovedActivities();
       if (result.loved) loved.add(cardKey);
@@ -170,6 +178,7 @@ export default function ActivityCard({ activity, isDeepLinked = false }) {
       setIsLoved(wasLoved);
       setLoveCount((count) => Math.max(0, count + (nextLoved ? -1 : 1)));
     } finally {
+      loveRequestInFlight.current = false;
       setIsLoving(false);
     }
   };

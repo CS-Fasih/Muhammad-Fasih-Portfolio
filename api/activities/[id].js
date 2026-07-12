@@ -9,11 +9,14 @@ const {
 const { requireAdmin, requireTrustedOrigin } = require('../../lib/auth');
 const { destroyImages } = require('../../lib/cloudinary');
 const { connectDB } = require('../../lib/db');
-const { findActivity, serializeActivity } = require('../../lib/activities');
+const {
+  countActivityLoves,
+  findActivity,
+  serializeActivity,
+} = require('../../lib/activities');
 const { validateActivityInput } = require('../../lib/validation');
 const crypto = require('crypto');
 const ActivityLove = require('../../models/ActivityLove');
-const { Activity } = require('../../lib/activities');
 
 function parseAdminView(req) {
   const value = getSingleQuery(req, 'admin');
@@ -51,7 +54,10 @@ async function getActivity(req, res) {
   setNoStore(res);
 
   return res.status(200).json({
-    activity: serializeActivity(activity, { admin: adminView }),
+    activity: serializeActivity(activity, {
+      admin: adminView,
+      loves: await countActivityLoves(activity._id),
+    }),
   });
 }
 
@@ -99,7 +105,10 @@ async function updateActivity(req, res) {
   setNoStore(res);
 
   const response = {
-    activity: serializeActivity(activity, { admin: true }),
+    activity: serializeActivity(activity, {
+      admin: true,
+      loves: await countActivityLoves(activity._id),
+    }),
   };
 
   if (cleanupPending) {
@@ -150,10 +159,13 @@ async function deleteActivity(req, res) {
 async function loveActivity(req, res) {
   const body = await readJsonBody(req, 4 * 1024);
   const visitorId = typeof body.visitorId === 'string' ? body.visitorId.trim() : '';
-  const action = body.action === 'unlike' ? 'unlike' : 'love';
+  const action = body.action;
 
   if (!/^[a-f\d-]{36}$/i.test(visitorId)) {
     throw new HttpError(400, 'A valid anonymous visitor ID is required.', 'INVALID_VISITOR');
+  }
+  if (action !== 'love' && action !== 'unlike') {
+    throw new HttpError(400, 'Reaction action must be love or unlike.', 'INVALID_ACTION');
   }
 
   await connectDB();
@@ -168,23 +180,16 @@ async function loveActivity(req, res) {
     .digest('hex');
 
   if (action === 'unlike') {
-    const removed = await ActivityLove.deleteOne({
+    await ActivityLove.deleteOne({
       activity: activity._id,
       visitorHash,
     });
-    let loves = activity.loves || 0;
-
-    if (removed.deletedCount === 1) {
-      const updated = await Activity.findByIdAndUpdate(
-        activity._id,
-        [{ $set: { loves: { $max: [0, { $subtract: [{ $ifNull: ['$loves', 0] }, 1] }] } } }],
-        { new: true, projection: { loves: 1 } },
-      );
-      loves = updated?.loves || 0;
-    }
 
     setNoStore(res);
-    return res.status(200).json({ loved: false, loves });
+    return res.status(200).json({
+      loved: false,
+      loves: await countActivityLoves(activity._id),
+    });
   }
 
   let created = false;
@@ -199,18 +204,11 @@ async function loveActivity(req, res) {
     if (error?.code !== 11000) throw error;
   }
 
-  let loves = activity.loves || 0;
-  if (created) {
-    const updated = await Activity.findByIdAndUpdate(
-      activity._id,
-      { $inc: { loves: 1 } },
-      { new: true, projection: { loves: 1 } },
-    );
-    loves = updated?.loves || loves + 1;
-  }
-
   setNoStore(res);
-  return res.status(created ? 201 : 200).json({ loved: true, loves });
+  return res.status(created ? 201 : 200).json({
+    loved: true,
+    loves: await countActivityLoves(activity._id),
+  });
 }
 
 module.exports = async function handler(req, res) {

@@ -12,6 +12,7 @@ const { connectDB } = require('../../lib/db');
 const {
   Activity,
   createActivityWithUniqueSlug,
+  getActivityLoveCounts,
   serializeActivity,
 } = require('../../lib/activities');
 const {
@@ -99,6 +100,7 @@ async function listActivities(req, res) {
       .limit(limit),
     Activity.countDocuments(query),
   ]);
+  const loveCounts = await getActivityLoveCounts(documents.map(({ _id }) => _id));
 
   const totalPages = total === 0 ? 0 : Math.ceil(total / limit);
 
@@ -108,7 +110,10 @@ async function listActivities(req, res) {
 
   return res.status(200).json({
     activities: documents.map((document) =>
-      serializeActivity(document, { admin: adminView }),
+      serializeActivity(document, {
+        admin: adminView,
+        loves: loveCounts.get(String(document._id)) || 0,
+      }),
     ),
     pagination: {
       hasMore: page * limit < total,
