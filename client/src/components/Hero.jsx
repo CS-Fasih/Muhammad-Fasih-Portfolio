@@ -1,5 +1,15 @@
 import { useEffect, useRef, useState } from 'react';
 
+const HERO_SLIDES = [
+  '/images/hero-slide-urban.webp',
+  '/images/hero-slide-datacenter.webp',
+  '/images/hero-slide-processor.webp',
+  '/images/hero-slide-neural.webp',
+  '/images/hero-slide-vault.webp',
+];
+
+const HERO_SLIDE_INTERVAL_MS = 6000;
+
 function CountUp({ end, duration = 1500 }) {
   const [count, setCount] = useState(0);
   const ref = useRef(null);
@@ -39,6 +49,39 @@ function CountUp({ end, duration = 1500 }) {
 }
 
 export default function Hero() {
+  const [slideState, setSlideState] = useState({ active: 0, previous: null });
+
+  useEffect(() => {
+    const motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let timerId;
+
+    const advanceSlide = () => {
+      setSlideState(({ active }) => ({
+        active: (active + 1) % HERO_SLIDES.length,
+        previous: active,
+      }));
+    };
+
+    const syncTimer = () => {
+      window.clearInterval(timerId);
+      timerId = undefined;
+
+      if (!motionPreference.matches && !document.hidden) {
+        timerId = window.setInterval(advanceSlide, HERO_SLIDE_INTERVAL_MS);
+      }
+    };
+
+    syncTimer();
+    document.addEventListener('visibilitychange', syncTimer);
+    motionPreference.addEventListener('change', syncTimer);
+
+    return () => {
+      window.clearInterval(timerId);
+      document.removeEventListener('visibilitychange', syncTimer);
+      motionPreference.removeEventListener('change', syncTimer);
+    };
+  }, []);
+
   const handleCTAClick = (e) => {
     e.preventDefault();
     const el = document.getElementById('contact');
@@ -49,11 +92,27 @@ export default function Hero() {
 
   return (
     <section className="hero" id="home">
-      <img
-        src="/images/hero-bg.png"
-        alt="Dark urban landscape"
-        className="hero__bg"
-      />
+      <div className="hero__slider" aria-hidden="true">
+        {HERO_SLIDES.map((src, index) => {
+          const stateClass = index === slideState.active
+            ? 'is-active'
+            : index === slideState.previous
+              ? 'is-previous'
+              : '';
+
+          return (
+            <img
+              key={src}
+              src={src}
+              alt=""
+              className={`hero__slide ${stateClass}`}
+              decoding="async"
+              fetchPriority={index === 0 ? 'high' : 'auto'}
+              loading={index === 0 ? 'eager' : 'lazy'}
+            />
+          );
+        })}
+      </div>
 
       <div className="container">
         <div className="hero__content">
