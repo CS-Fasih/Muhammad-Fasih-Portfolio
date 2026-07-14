@@ -8,6 +8,7 @@ client/dist/
 .vercel/node/
 .vercel/output/
 .vercel/.env.*.local
+.vercel/
 
 # Environment variables
 .env

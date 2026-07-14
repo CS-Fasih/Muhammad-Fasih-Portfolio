@@ -7,16 +7,22 @@ const {
   setNoStore,
 } = require('../../lib/api');
 const { requireAdmin, requireTrustedOrigin } = require('../../lib/auth');
-const { destroyImages } = require('../../lib/cloudinary');
+const { destroyImages, verifyActivityImages } = require('../../lib/cloudinary');
 const { connectDB } = require('../../lib/db');
 const {
   countActivityLoves,
   findActivity,
+  getViewerLovedActivityIds,
   serializeActivity,
 } = require('../../lib/activities');
 const { validateActivityInput } = require('../../lib/validation');
-const crypto = require('crypto');
 const ActivityLove = require('../../models/ActivityLove');
+const { enforceRateLimit } = require('../../lib/rate-limit');
+const {
+  getOrCreateVisitorToken,
+  getVisitorToken,
+  hashVisitorForActivity,
+} = require('../../lib/visitor');
 
 function parseAdminView(req) {
   const value = getSingleQuery(req, 'admin');
@@ -37,6 +43,13 @@ function getIdentifier(req) {
 async function getActivity(req, res) {
   const adminView = parseAdminView(req);
   if (adminView && !requireAdmin(req, res)) return;
+  if (!adminView) {
+    await enforceRateLimit(req, {
+      scope: 'activity-read',
+      limit: 180,
+      windowMs: 10 * 60 * 1000,
+    });
+  }
 
   await connectDB();
 
@@ -53,10 +66,16 @@ async function getActivity(req, res) {
   // stale public copy after that state change.
   setNoStore(res);
 
+  const viewerLovedIds = await getViewerLovedActivityIds(
+    [activity._id],
+    getVisitorToken(req),
+  );
+
   return res.status(200).json({
     activity: serializeActivity(activity, {
       admin: adminView,
       loves: await countActivityLoves(activity._id),
+      viewerLoved: viewerLovedIds.has(String(activity._id)),
     }),
   });
 }
@@ -64,11 +83,17 @@ async function getActivity(req, res) {
 async function updateActivity(req, res) {
   if (!requireTrustedOrigin(req, res)) return;
   if (!requireAdmin(req, res)) return;
+  await enforceRateLimit(req, {
+    scope: 'admin-activity-write',
+    limit: 120,
+    windowMs: 60 * 60 * 1000,
+  });
 
   const body = await readJsonBody(req, 64 * 1024);
   const input = validateActivityInput(body, { partial: true });
 
   await connectDB();
+  if (input.images) await verifyActivityImages(input.images);
 
   const activity = await findActivity(getIdentifier(req));
   if (!activity) {
@@ -124,6 +149,11 @@ async function updateActivity(req, res) {
 async function deleteActivity(req, res) {
   if (!requireTrustedOrigin(req, res)) return;
   if (!requireAdmin(req, res)) return;
+  await enforceRateLimit(req, {
+    scope: 'admin-activity-write',
+    limit: 120,
+    windowMs: 60 * 60 * 1000,
+  });
 
   await connectDB();
 
@@ -157,12 +187,18 @@ async function deleteActivity(req, res) {
 }
 
 async function loveActivity(req, res) {
+  if (!requireTrustedOrigin(req, res)) return;
+  await enforceRateLimit(req, {
+    scope: 'activity-reaction',
+    limit: 30,
+    windowMs: 60 * 60 * 1000,
+  });
+
   const body = await readJsonBody(req, 4 * 1024);
-  const visitorId = typeof body.visitorId === 'string' ? body.visitorId.trim() : '';
   const action = body.action;
 
-  if (!/^[a-f\d-]{36}$/i.test(visitorId)) {
-    throw new HttpError(400, 'A valid anonymous visitor ID is required.', 'INVALID_VISITOR');
+  if (Object.keys(body).some((field) => field !== 'action')) {
+    throw new HttpError(400, 'Invalid reaction request.', 'INVALID_REACTION');
   }
   if (action !== 'love' && action !== 'unlike') {
     throw new HttpError(400, 'Reaction action must be love or unlike.', 'INVALID_ACTION');
@@ -174,15 +210,14 @@ async function loveActivity(req, res) {
     throw new HttpError(404, 'Activity not found.', 'ACTIVITY_NOT_FOUND');
   }
 
-  const visitorHash = crypto
-    .createHmac('sha256', process.env.JWT_SECRET)
-    .update(visitorId)
-    .digest('hex');
+  const visitorToken = getOrCreateVisitorToken(req, res);
+  const visitorHash = hashVisitorForActivity(visitorToken, activity._id);
 
   if (action === 'unlike') {
     await ActivityLove.deleteOne({
       activity: activity._id,
       visitorHash,
+      reactionVersion: 2,
     });
 
     setNoStore(res);
@@ -195,8 +230,8 @@ async function loveActivity(req, res) {
   let created = false;
   try {
     const result = await ActivityLove.updateOne(
-      { activity: activity._id, visitorHash },
-      { $setOnInsert: { activity: activity._id, visitorHash } },
+      { activity: activity._id, visitorHash, reactionVersion: 2 },
+      { $setOnInsert: { activity: activity._id, visitorHash, reactionVersion: 2 } },
       { upsert: true },
     );
     created = result.upsertedCount === 1;

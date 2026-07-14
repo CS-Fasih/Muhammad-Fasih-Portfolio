@@ -285,7 +285,7 @@ export default function ActivityForm({
       errors.occurredAt = 'Enter a valid activity date.';
     }
     if (!isSafeExternalUrl(values.externalLink.trim())) {
-      errors.externalLink = 'Enter a complete http:// or https:// URL.';
+      errors.externalLink = 'Enter a complete HTTPS URL without embedded credentials.';
     }
     if (values.externalLink.trim().length > 2048) errors.externalLink = 'External URL is too long.';
     if (values.externalLinkLabel.trim() && !values.externalLink.trim()) {

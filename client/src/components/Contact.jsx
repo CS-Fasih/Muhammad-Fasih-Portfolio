@@ -8,6 +8,7 @@ export default function Contact() {
     email: '',
     subject: '',
     message: '',
+    website: '',
   });
   const [status, setStatus] = useState('');
   const [loading, setLoading] = useState(false);
@@ -22,28 +23,28 @@ export default function Contact() {
     setStatus('');
 
     try {
-      const res = await fetch('https://api.web3forms.com/submit', {
+      const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
           'Accept': 'application/json'
         },
         body: JSON.stringify({
-          access_key: '58d59648-acea-47e1-ac3a-d1d20e31c419',
           name: formData.name,
           email: formData.email,
           subject: formData.subject,
-          message: formData.message
+          message: formData.message,
+          website: formData.website,
         }),
       });
 
-      const result = await res.json();
+      const result = await res.json().catch(() => ({}));
 
       if (res.ok && result.success) {
         setStatus('Message sent successfully! I\'ll get back to you soon.');
-        setFormData({ name: '', email: '', subject: '', message: '' });
+        setFormData({ name: '', email: '', subject: '', message: '', website: '' });
       } else {
-        setStatus(result.message || 'Something went wrong. Please try again or email me directly.');
+        setStatus(result.error || result.message || 'Something went wrong. Please try again or email me directly.');
       }
     } catch {
       setStatus('Server unavailable. Please email me at muhammadfasihofficial@proton.me');
@@ -65,6 +66,18 @@ export default function Contact() {
         </div>
 
         <form className="contact__form reveal" onSubmit={handleSubmit}>
+          <div className="contact__honeypot" aria-hidden="true">
+            <label htmlFor="contact-website">Leave this field empty</label>
+            <input
+              id="contact-website"
+              type="text"
+              name="website"
+              value={formData.website || ''}
+              onChange={handleChange}
+              tabIndex={-1}
+              autoComplete="off"
+            />
+          </div>
           <input
             type="text"
             name="name"

@@ -10,31 +10,6 @@ import {
 
 const COLLAPSIBLE_CONTENT_LENGTH = 260;
 const COLLAPSIBLE_CONTENT_LINES = 4;
-const VISITOR_KEY = 'mf-activity-visitor';
-const LOVED_KEY = 'mf-loved-activities';
-
-function getVisitorId() {
-  let visitorId = window.localStorage.getItem(VISITOR_KEY);
-  if (!visitorId) {
-    visitorId = crypto.randomUUID();
-    window.localStorage.setItem(VISITOR_KEY, visitorId);
-  }
-  return visitorId;
-}
-
-function getLovedActivities() {
-  if (!window.localStorage.getItem(VISITOR_KEY)) {
-    window.localStorage.removeItem(LOVED_KEY);
-    return new Set();
-  }
-
-  try {
-    return new Set(JSON.parse(window.localStorage.getItem(LOVED_KEY) || '[]'));
-  } catch {
-    return new Set();
-  }
-}
-
 async function copyText(value) {
   if (navigator.clipboard?.writeText) {
     await navigator.clipboard.writeText(value);
@@ -113,7 +88,7 @@ export default function ActivityCard({ activity, isDeepLinked = false }) {
   const [isContentExpanded, setIsContentExpanded] = useState(isDeepLinked);
   const cardKey = activityKey(activity);
   const [loveCount, setLoveCount] = useState(Math.max(0, activity.loves || 0));
-  const [isLoved, setIsLoved] = useState(() => getLovedActivities().has(cardKey));
+  const [isLoved, setIsLoved] = useState(() => Boolean(activity.viewerLoved));
   const [isLoving, setIsLoving] = useState(false);
   const loveRequestInFlight = useRef(false);
   const anchor = activity.slug || activityKey(activity);
@@ -166,14 +141,10 @@ export default function ActivityCard({ activity, isDeepLinked = false }) {
     try {
       const result = await apiRequest(`/api/activities/${encodeURIComponent(cardKey)}`, {
         method: 'POST',
-        body: { visitorId: getVisitorId(), action: nextLoved ? 'love' : 'unlike' },
+        body: { action: nextLoved ? 'love' : 'unlike' },
       });
       setIsLoved(result.loved);
       setLoveCount(result.loves);
-      const loved = getLovedActivities();
-      if (result.loved) loved.add(cardKey);
-      else loved.delete(cardKey);
-      window.localStorage.setItem(LOVED_KEY, JSON.stringify([...loved]));
     } catch {
       setIsLoved(wasLoved);
       setLoveCount((count) => Math.max(0, count + (nextLoved ? -1 : 1)));

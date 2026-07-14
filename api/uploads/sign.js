@@ -13,6 +13,7 @@ const {
   CLOUDINARY_FOLDER,
   MAX_IMAGE_BYTES,
 } = require('../../lib/validation');
+const { enforceRateLimit } = require('../../lib/rate-limit');
 
 const MIME_FORMATS = Object.freeze({
   'image/gif': ['gif'],
@@ -80,6 +81,12 @@ module.exports = async function handler(req, res) {
     if (!requireTrustedOrigin(req, res)) return;
     if (!requireAdmin(req, res)) return;
 
+    await enforceRateLimit(req, {
+      scope: 'upload-signature',
+      limit: 30,
+      windowMs: 60 * 60 * 1000,
+    });
+
     const body = await readJsonBody(req, 4 * 1024);
     validateFileMetadata(body);
 
@@ -92,6 +99,13 @@ module.exports = async function handler(req, res) {
       public_id: `${CLOUDINARY_FOLDER}/${crypto.randomUUID()}`,
       timestamp: Math.floor(Date.now() / 1000),
     };
+    const uploadPreset = process.env.CLOUDINARY_UPLOAD_PRESET?.trim();
+    if (uploadPreset) {
+      if (!/^[a-zA-Z0-9_-]{1,120}$/.test(uploadPreset)) {
+        throw new HttpError(503, 'Image upload is not configured.', 'SERVICE_NOT_CONFIGURED');
+      }
+      uploadParams.upload_preset = uploadPreset;
+    }
 
     const signed = createUploadSignature(uploadParams);
 

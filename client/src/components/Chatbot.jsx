@@ -1,6 +1,21 @@
 import { useState, useRef, useEffect } from 'react';
 import DOMPurify from 'dompurify';
 
+function isAllowedChatLink(value) {
+  try {
+    const url = new URL(value);
+    if (url.protocol !== 'https:' || url.username || url.password) return false;
+    return (
+      (url.hostname === 'github.com' && url.pathname.startsWith('/CS-Fasih/'))
+      || (url.hostname === 'linkedin.com' || url.hostname === 'www.linkedin.com')
+      || url.hostname === 'muhammadfasih.vercel.app'
+      || (url.hostname === 'fiverr.com' && url.pathname.startsWith('/cs_fasih'))
+    );
+  } catch {
+    return false;
+  }
+}
+
 // Simple markdown-to-HTML renderer for bot responses
 function renderMarkdown(text) {
   let html = text
@@ -13,11 +28,19 @@ function renderMarkdown(text) {
     // Italic
     .replace(/\*(.+?)\*/g, '<em>$1</em>')
     // Links
-    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>')
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_match, label, href) => (
+      isAllowedChatLink(href)
+        ? `<a href="${href}" target="_blank" rel="noopener noreferrer">${label}</a>`
+        : label
+    ))
     // Line breaks
     .replace(/\n/g, '<br />');
     
-  return DOMPurify.sanitize(html);
+  return DOMPurify.sanitize(html, {
+    ALLOWED_TAGS: ['a', 'br', 'code', 'em', 'pre', 'strong'],
+    ALLOWED_ATTR: ['class', 'href', 'rel', 'target'],
+    ALLOW_DATA_ATTR: false,
+  });
 }
 
 export default function Chatbot() {
@@ -59,13 +82,17 @@ export default function Chatbot() {
     if (!trimmed || isLoading) return;
 
     const userMessage = { role: 'user', text: trimmed };
-    setMessages((prev) => [...prev, userMessage]);
+    setMessages((prev) => [
+      prev[0],
+      ...prev.slice(1).concat(userMessage).slice(-40),
+    ]);
     setInput('');
     setIsLoading(true);
 
     // Build history for multi-turn context (exclude welcome message)
     const history = messages
-      .filter((_, i) => i > 0) // skip the welcome message
+      .slice(1)
+      .slice(-20)
       .map((m) => ({
         role: m.role === 'bot' ? 'model' : 'user',
         text: m.text,
@@ -81,23 +108,26 @@ export default function Chatbot() {
       const data = await res.json();
 
       if (data.reply) {
-        setMessages((prev) => [...prev, { role: 'bot', text: data.reply }]);
+        setMessages((prev) => [
+          prev[0],
+          ...prev.slice(1).concat({ role: 'bot', text: data.reply }).slice(-40),
+        ]);
       } else {
         setMessages((prev) => [
-          ...prev,
-          {
+          prev[0],
+          ...prev.slice(1).concat({
             role: 'bot',
             text: data.error || "Sorry, I couldn't process that. Please try again.",
-          },
+          }).slice(-40),
         ]);
       }
     } catch {
       setMessages((prev) => [
-        ...prev,
-        {
+        prev[0],
+        ...prev.slice(1).concat({
           role: 'bot',
           text: "Connection error. Please check your internet and try again.",
-        },
+        }).slice(-40),
       ]);
     } finally {
       setIsLoading(false);
@@ -167,12 +197,14 @@ export default function Chatbot() {
                   </svg>
                 </div>
               )}
-              <div
-                className="chatbot-msg__bubble"
-                dangerouslySetInnerHTML={{
-                  __html: msg.role === 'bot' ? renderMarkdown(msg.text) : msg.text,
-                }}
-              />
+              {msg.role === 'bot' ? (
+                <div
+                  className="chatbot-msg__bubble"
+                  dangerouslySetInnerHTML={{ __html: renderMarkdown(msg.text) }}
+                />
+              ) : (
+                <div className="chatbot-msg__bubble">{msg.text}</div>
+              )}
             </div>
           ))}
           {isLoading && (

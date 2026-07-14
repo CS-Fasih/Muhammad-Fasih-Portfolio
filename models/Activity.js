@@ -126,7 +126,7 @@ const activitySchema = new mongoose.Schema(
         validator(value) {
           return value === undefined || isWebUrl(value);
         },
-        message: 'External link must be a valid HTTP or HTTPS URL.',
+        message: 'External link must be a valid HTTPS URL without embedded credentials.',
       },
     },
     externalLinkLabel: {

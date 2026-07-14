@@ -9,12 +9,16 @@ const {
 } = require('../../lib/api');
 const { requireAdmin, requireTrustedOrigin } = require('../../lib/auth');
 const { connectDB } = require('../../lib/db');
+const { verifyActivityImages } = require('../../lib/cloudinary');
 const {
   Activity,
   createActivityWithUniqueSlug,
   getActivityLoveCounts,
+  getViewerLovedActivityIds,
   serializeActivity,
 } = require('../../lib/activities');
+const { getVisitorToken } = require('../../lib/visitor');
+const { enforceRateLimit } = require('../../lib/rate-limit');
 const {
   ACTIVITY_STATUSES,
   normalizeCategory,
@@ -56,13 +60,20 @@ function parseCategoryQuery(req) {
 async function listActivities(req, res) {
   const adminView = parseAdminView(req);
   if (adminView && !requireAdmin(req, res)) return;
+  if (!adminView) {
+    await enforceRateLimit(req, {
+      scope: 'activity-read',
+      limit: 180,
+      windowMs: 10 * 60 * 1000,
+    });
+  }
 
   const category = parseCategoryQuery(req);
   const page = parsePositiveInteger(
     getSingleQuery(req, 'page'),
     'page',
     1,
-    1000,
+    100,
   );
   const limit = parsePositiveInteger(
     getSingleQuery(req, 'limit'),
@@ -97,10 +108,15 @@ async function listActivities(req, res) {
     Activity.find(query)
       .sort({ featured: -1, occurredAt: -1, createdAt: -1 })
       .skip(skip)
-      .limit(limit),
-    Activity.countDocuments(query),
+      .limit(limit)
+      .maxTimeMS(5000),
+    Activity.countDocuments(query).maxTimeMS(5000),
   ]);
-  const loveCounts = await getActivityLoveCounts(documents.map(({ _id }) => _id));
+  const activityIds = documents.map(({ _id }) => _id);
+  const [loveCounts, viewerLovedIds] = await Promise.all([
+    getActivityLoveCounts(activityIds),
+    getViewerLovedActivityIds(activityIds, getVisitorToken(req)),
+  ]);
 
   const totalPages = total === 0 ? 0 : Math.ceil(total / limit);
 
@@ -113,6 +129,7 @@ async function listActivities(req, res) {
       serializeActivity(document, {
         admin: adminView,
         loves: loveCounts.get(String(document._id)) || 0,
+        viewerLoved: viewerLovedIds.has(String(document._id)),
       }),
     ),
     pagination: {
@@ -129,11 +146,17 @@ async function listActivities(req, res) {
 async function createActivity(req, res) {
   if (!requireTrustedOrigin(req, res)) return;
   if (!requireAdmin(req, res)) return;
+  await enforceRateLimit(req, {
+    scope: 'admin-activity-write',
+    limit: 120,
+    windowMs: 60 * 60 * 1000,
+  });
 
   const body = await readJsonBody(req, 64 * 1024);
   const input = validateActivityInput(body);
 
   await connectDB();
+  await verifyActivityImages(input.images);
 
   const activity = await createActivityWithUniqueSlug(input);
 

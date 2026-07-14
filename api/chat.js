@@ -1,4 +1,15 @@
 // Groq API migration: we use native fetch so no SDK is required.
+const {
+  HttpError,
+  handleApiError,
+  methodNotAllowed,
+  readJsonBody,
+  setNoStore,
+} = require('../lib/api');
+const { requireTrustedOrigin } = require('../lib/auth');
+const { enforceRateLimit } = require('../lib/rate-limit');
+const readmeCache = new Map();
+
 // ── System Prompt ──────────────────────────────────────────
 const SYSTEM_PROMPT = `You are a professional AI assistant embedded in Muhammad Fasih's software engineering portfolio website. Your sole purpose is to help visitors — recruiters, clients, collaborators, and fellow developers — learn about Fasih's background, skills, projects, and availability.
 
@@ -301,6 +312,9 @@ function detectRepo(message) {
 
 // ── Fetch README from GitHub ───────────────────────────────
 async function fetchReadme(repoPath) {
+  const cached = readmeCache.get(repoPath);
+  if (cached && cached.expiresAt > Date.now()) return cached.value;
+
   const url = `https://raw.githubusercontent.com/${repoPath}/main/README.md`;
   try {
     const res = await fetch(url, { signal: AbortSignal.timeout(8000) });
@@ -311,66 +325,86 @@ async function fetchReadme(repoPath) {
       if (!res2.ok) return null;
       const text = await res2.text();
       // Limit to 12000 chars to stay within context limits
-      return text.length > 12000 ? text.slice(0, 12000) + "\n\n[README truncated...]" : text;
+      const value = text.length > 12000 ? text.slice(0, 12000) + "\n\n[README truncated...]" : text;
+      readmeCache.set(repoPath, { value, expiresAt: Date.now() + 5 * 60 * 1000 });
+      return value;
     }
     const text = await res.text();
-    return text.length > 12000 ? text.slice(0, 12000) + "\n\n[README truncated...]" : text;
+    const value = text.length > 12000 ? text.slice(0, 12000) + "\n\n[README truncated...]" : text;
+    readmeCache.set(repoPath, { value, expiresAt: Date.now() + 5 * 60 * 1000 });
+    return value;
   } catch {
     return null;
   }
 }
 
+function validateChatBody(body) {
+  if (Object.keys(body).some((field) => !['message', 'history'].includes(field))) {
+    throw new HttpError(400, 'Invalid chat request.', 'INVALID_CHAT_REQUEST');
+  }
+
+  if (typeof body.message !== 'string') {
+    throw new HttpError(400, 'Message is required.', 'INVALID_CHAT_REQUEST');
+  }
+  const message = body.message.trim();
+  if (!message || message.length > 2000) {
+    throw new HttpError(400, 'Message must contain 1 to 2000 characters.', 'INVALID_CHAT_REQUEST');
+  }
+
+  if (body.history !== undefined && !Array.isArray(body.history)) {
+    throw new HttpError(400, 'Chat history is invalid.', 'INVALID_CHAT_REQUEST');
+  }
+
+  const history = [];
+  let historyCharacters = 0;
+  const turns = (body.history || []).slice(-20);
+  if (turns[0]?.role === 'model' || turns[0]?.role === 'assistant') turns.shift();
+  if (turns.at(-1)?.role === 'user') turns.pop();
+  let expectedRole = 'user';
+  for (const turn of turns) {
+    if (
+      !turn
+      || typeof turn !== 'object'
+      || Array.isArray(turn)
+      || turn.role !== expectedRole
+      || typeof turn.text !== 'string'
+      || turn.text.length > 2000
+    ) {
+      throw new HttpError(400, 'Chat history is invalid.', 'INVALID_CHAT_REQUEST');
+    }
+
+    const text = turn.text.trim();
+    historyCharacters += text.length;
+    if (!text || historyCharacters > 16_000) {
+      throw new HttpError(400, 'Chat history is too large.', 'INVALID_CHAT_REQUEST');
+    }
+    history.push({ role: turn.role === 'user' ? 'user' : 'assistant', text });
+    expectedRole = expectedRole === 'user' ? 'model' : 'user';
+  }
+
+  return { history, message };
+}
+
 // ── Main Handler ───────────────────────────────────────────
 module.exports = async function handler(req, res) {
-  // CORS
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-
-  if (req.method === "OPTIONS") {
-    return res.status(200).end();
-  }
-
-  if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method not allowed" });
-  }
-
-  const apiKey = process.env.GROQ_API_KEY;
-  if (!apiKey) {
-    return res.status(500).json({ error: "GROQ_API_KEY not configured" });
-  }
-
-  // Security: Check Origin to prevent abuse from other domains
-  const origin = req.headers.origin || req.headers.referer;
-  if (origin) {
-    try {
-      const originUrl = new URL(origin);
-      const isAllowed =
-        originUrl.hostname === 'localhost' ||
-        originUrl.hostname === '127.0.0.1' ||
-        originUrl.hostname.endsWith('vercel.app');
-
-      if (!isAllowed) {
-        console.warn(`Blocked cross-origin request from: ${originUrl.hostname}`);
-        return res.status(403).json({ error: "Forbidden: Cross-origin requests not allowed." });
-      }
-    } catch (err) {
-      // If parsing fails, fail secure
-      return res.status(403).json({ error: "Forbidden: Invalid origin format." });
-    }
-  }
-
-  const { message, history } = req.body || {};
-  if (!message || typeof message !== "string" || message.trim().length === 0) {
-    return res.status(400).json({ error: "Message is required" });
-  }
-
-  // Rate-limit: basic message length cap
-  if (message.length > 2000) {
-    return res.status(400).json({ error: "Message too long (max 2000 chars)" });
-  }
-
   try {
+    if (req.method !== 'POST') return methodNotAllowed(res, ['POST']);
+    if (!requireTrustedOrigin(req, res)) return;
+
+    await enforceRateLimit(req, {
+      scope: 'chat',
+      limit: 20,
+      windowMs: 10 * 60 * 1000,
+    });
+
+    const { message, history } = validateChatBody(
+      await readJsonBody(req, 24 * 1024),
+    );
+    const apiKey = process.env.GROQ_API_KEY;
+    if (!apiKey) {
+      throw new HttpError(503, 'AI service is unavailable.', 'SERVICE_NOT_CONFIGURED');
+    }
+
     // ── Detect project & fetch README ──
     let readmeInjection = "";
     const detected = detectRepo(message);
@@ -386,15 +420,8 @@ module.exports = async function handler(req, res) {
     messages.push({ role: "system", content: SYSTEM_PROMPT });
 
     // Build chat history from client-sent history
-    if (Array.isArray(history)) {
-      for (const turn of history.slice(-20)) { // Keep last 20 turns
-        if (turn.role && turn.text) {
-          messages.push({
-            role: turn.role === "user" ? "user" : "assistant",
-            content: turn.text
-          });
-        }
-      }
+    for (const turn of history) {
+      messages.push({ role: turn.role, content: turn.text });
     }
 
     // Append README injection to the user message if available
@@ -404,34 +431,35 @@ module.exports = async function handler(req, res) {
 
     messages.push({ role: "user", content: userMessage });
 
-    const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-      method: "POST",
+    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
       headers: {
-        "Authorization": `Bearer ${apiKey}`,
-        "Content-Type": "application/json"
+        Authorization: `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         model: "llama-3.3-70b-versatile",
         messages: messages,
         temperature: 0.7,
         max_tokens: 1024
-      })
+      }),
+      signal: AbortSignal.timeout(15_000),
     });
 
     if (!response.ok) {
-      const errorText = await response.text();
-      console.error("Groq API error:", errorText);
-      throw new Error(`Groq API returned status ${response.status}`);
+      console.error('[chat-api] Groq request failed with status:', response.status);
+      throw new HttpError(502, 'AI service is temporarily unavailable.', 'AI_PROVIDER_ERROR');
     }
 
     const data = await response.json();
-    const reply = data.choices[0].message.content;
+    const reply = data?.choices?.[0]?.message?.content;
+    if (typeof reply !== 'string' || !reply.trim()) {
+      throw new HttpError(502, 'AI service returned an invalid response.', 'AI_PROVIDER_ERROR');
+    }
 
+    setNoStore(res);
     return res.status(200).json({ reply });
-  } catch (err) {
-    console.error("Chat API error:", err.message);
-    return res.status(500).json({
-      error: "AI service temporarily unavailable. Please try again.",
-    });
+  } catch (error) {
+    return handleApiError(res, error);
   }
 };

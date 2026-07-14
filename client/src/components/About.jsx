@@ -1,6 +1,26 @@
 import useScrollReveal from '../hooks/useScrollReveal';
 import services from '../data/services';
 
+function ServiceIcon({ id }) {
+  const common = {
+    width: 60,
+    height: 60,
+    viewBox: '0 0 24 24',
+    fill: 'none',
+    stroke: 'currentColor',
+    strokeWidth: 1.5,
+    strokeLinecap: 'round',
+    strokeLinejoin: 'round',
+    'aria-hidden': true,
+  };
+
+  if (id === 1) return <svg {...common}><polyline points="16 18 22 12 16 6" /><polyline points="8 6 2 12 8 18" /></svg>;
+  if (id === 2) return <svg {...common}><path d="M12 2a4 4 0 0 1 4 4c0 1.95-1.4 3.57-3.25 3.92L12 10v2" /><circle cx="12" cy="16" r="4" /><path d="M8 16H4M20 16h-4M12 20v2M4 4l4 4M20 4l-4 4" /></svg>;
+  if (id === 3) return <svg {...common}><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z" /><path d="m9 12 2 2 4-4" /></svg>;
+  if (id === 4) return <svg {...common}><rect x="4" y="4" width="16" height="16" rx="2" /><rect x="9" y="9" width="6" height="6" /><path d="M9 1v3M15 1v3M9 20v3M15 20v3M20 9h3M20 14h3M1 9h3M1 14h3" /></svg>;
+  return <svg {...common}><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9Z" /><polyline points="13 2 13 9 20 9" /><path d="M10 13h4M10 17h4" /></svg>;
+}
+
 export default function About() {
   const sectionRef = useScrollReveal();
 
@@ -24,10 +44,7 @@ export default function About() {
         <div className="services-grid reveal">
           {services.map((service) => (
             <div className="service-item" key={service.id}>
-              <div
-                className="service-item__icon"
-                dangerouslySetInnerHTML={{ __html: service.icon }}
-              />
+              <div className="service-item__icon"><ServiceIcon id={service.id} /></div>
               <span className="service-item__label">{service.title}</span>
             </div>
           ))}

@@ -40,12 +40,17 @@ cp .env.example .env.local
 | `ADMIN_EMAIL` | Yes | The single allowed administrator email |
 | `ADMIN_PASSWORD_HASH` | Yes | bcrypt hash of the administrator password; never use plaintext |
 | `JWT_SECRET` | Yes | Long random value used to sign the administrator session |
+| `REACTION_HASH_SECRET` | Yes | Separate secret for unlinkable anonymous reaction identities |
+| `RATE_LIMIT_HASH_SECRET` | Yes | Separate secret for pseudonymizing rate-limit keys |
+| `APP_ORIGIN` | Yes | Exact canonical HTTPS origin accepted by mutating APIs |
 | `CLOUDINARY_CLOUD_NAME` | Yes | Cloudinary product-environment cloud name |
 | `CLOUDINARY_API_KEY` | Yes | Cloudinary API key |
 | `CLOUDINARY_API_SECRET` | Yes | Server-only Cloudinary API secret |
+| `CLOUDINARY_UPLOAD_PRESET` | Recommended | Signed preset enforcing provider-side upload limits |
 | `GROQ_API_KEY` | Chatbot only | Keeps the existing chatbot API operational |
+| `WEB3FORMS_ACCESS_KEY` | Contact form | Server-only, rotated Web3Forms contact key |
 
-Do not prefix server secrets with `VITE_`; Vite-prefixed values are exposed to the browser. Keep `.env.local` out of Git. For Vercel, add the variables to the project’s Development, Preview, and Production environments as appropriate, then redeploy because environment changes do not alter an existing deployment.
+Do not prefix server secrets with `VITE_`; Vite-prefixed values are exposed to the browser. Keep `.env.local` out of Git. Use isolated credentials and databases for Preview—never copy Production secrets into branch deployments. Redeploy after changing environment values because changes do not alter an existing deployment.
 
 Generate a strong JWT secret locally:
 
@@ -69,7 +74,7 @@ Copy the complete output, including its leading `$2...`, into `ADMIN_PASSWORD_HA
 
 1. Create an Atlas project and a **Free cluster** (formerly M0) in a supported region.
 2. Create a dedicated database user with a strong, unique password. An Atlas database user is separate from the user that signs in to the Atlas website.
-3. Add your development IP address under Network Access. Vercel functions do not normally have one fixed outbound IP on the free plan, so a serverless deployment may require `0.0.0.0/0`; if used, rely on strong database credentials and least-privilege database access. Restrict the rule when fixed egress is available.
+3. Add only the required application egress addresses under Network Access. Prefer fixed egress, private connectivity, or a platform integration. If a temporary broad rule is unavoidable, use a least-privilege application user, monitor access, rotate credentials regularly, and remove the broad rule as soon as fixed egress is available.
 4. Choose **Connect → Drivers**, copy the `mongodb+srv://...` URI, URL-encode special characters in the database password, and include a database name such as `portfolio`.
 5. Save the result as `MONGODB_URI` locally and in Vercel.
 
@@ -79,8 +84,8 @@ The serverless database helper caches a connection between warm invocations, but
 
 1. Create a Cloudinary account and open the product-environment dashboard.
 2. Copy its cloud name, API key, and API secret into the matching environment variables. Never put the API secret in client code.
-3. No unsigned upload preset is needed. The authenticated dashboard obtains a short-lived signature from `/api/uploads/sign`, then uploads directly from the browser into `muhammad-fasih-portfolio/activities`.
-4. The application accepts image files up to 5 MB each and up to four images per activity. Add useful alt text for every image.
+3. No unsigned upload preset is needed. The authenticated dashboard obtains a short-lived signature from `/api/uploads/sign`, then uploads directly from the browser into `muhammad-fasih-portfolio/activities`. The server re-checks Cloudinary’s reported bytes and format before persisting an image reference.
+4. The application accepts image files up to 5 MB each and up to four images per activity. For stronger provider-side enforcement, configure a signed Cloudinary upload preset with the same format and byte limits. Add useful alt text for every image.
 
 Cloudinary’s Free plan measures transformations, storage, and bandwidth with a shared monthly credit allowance. Responsive transformations and delivered images consume that allowance, so monitor usage in the Cloudinary console; see the current [Cloudinary plan documentation](https://cloudinary.com/documentation/billing_and_plans).
 
@@ -173,7 +178,6 @@ Vercel rewrites non-API browser routes to the React entry point while keeping `/
 │       └── index.css    # Existing Vanilla CSS design system
 ├── lib/                 # Database, authentication, validation, Cloudinary
 ├── models/              # Mongoose models
-├── server/              # Legacy standalone Express contact server
 ├── .env.example         # Placeholder server environment variables
 └── vercel.json          # Build, headers, API, and SPA route handling
 ```
