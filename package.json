@@ -24,6 +24,6 @@
     "bcryptjs": "^3.0.3",
     "cloudinary": "^2.10.0",
     "jsonwebtoken": "^9.0.3",
-    "mongoose": "^9.7.4"
+    "mongoose": "^9.8.1"
   }
 }
