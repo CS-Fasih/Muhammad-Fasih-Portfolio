@@ -1,8 +1,5 @@
 import useScrollReveal from '../hooks/useScrollReveal';
 import services from '../data/services';
-import portfolioContent from '../data/portfolio';
-
-const { about } = portfolioContent;
 
 function ServiceIcon({ id }) {
   const common = {
@@ -37,10 +34,12 @@ export default function About() {
 
   return (
     <section className="about" id="about" ref={sectionRef}>
+      {/* Heading */}
       <div className="about__heading reveal">
-        <h2>{about.title}</h2>
+        <h2>About Me</h2>
       </div>
 
+      {/* Services Grid */}
       <div className="container">
         <div className="services-grid reveal">
           {services.map((service) => (
@@ -51,87 +50,81 @@ export default function About() {
           ))}
         </div>
 
+        {/* About Intro (3-column) */}
         <div className="about__intro reveal">
           <div className="about__intro-left">
             <h3>
-              {about.introductionTitle}<br />
-              {about.introductionSubtitle}
+              Welcome — I'm<br />
+              Muhammad Fasih,<br />
+              Software Engineer
             </h3>
-            {about.introduction.slice(0, 1).map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+            <p>
+              A fresh CS graduate from Dawood University of Engineering & Technology, Karachi.
+              I specialize in building production-ready, full-stack web applications and
+              intelligent AI systems. My work spans MERN stack development, microservices
+              architecture, computer vision, and endpoint security tools.
+            </p>
           </div>
 
           <div className="about__intro-center">
             <img
               src="/images/about-photo.png"
-              alt={about.introductionImageAlt}
+              alt="Developer workspace"
             />
           </div>
 
           <div className="about__intro-right">
-            {about.introduction.slice(1).map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
-            <a href="#work" className="btn-primary" onClick={handleViewProjects}>{about.viewProjectsAction}</a>
+            <p>
+              With 22+ public repositories and 428+ GitHub contributions, I've built
+              everything from multi-model AI assistants analyzing satellite imagery to
+              real-time endpoint security daemons in C/POSIX. I believe in shipping
+              deployable, well-documented software — not just demos.
+            </p>
+            <p>
+              My toolkit includes React, Node.js, Python, C, Docker, PyTorch,
+              and PostgreSQL. I'm passionate about compilers, distributed systems,
+              and solving complex problems with clean architecture.
+            </p>
+            <a href="#work" className="btn-primary" onClick={handleViewProjects}>
+              View All Projects
+            </a>
           </div>
         </div>
 
-        <div className="profile-grid reveal">
-          <section className="profile-section" aria-labelledby="profile-experience-title">
-            <h3 className="profile-section__heading" id="profile-experience-title">{about.experienceTitle}</h3>
-            <div className="profile-timeline">
-              {about.experience.map((entry) => (
-                <article className="profile-entry" key={`${entry.role}-${entry.organization}`}>
-                  <p className="profile-entry__period">{entry.period}</p>
-                  <h4 className="profile-entry__title">{entry.role}</h4>
-                  {entry.url ? (
-                    <a className="profile-entry__organization" href={entry.url} target="_blank" rel="noopener noreferrer">
-                      {entry.organization}
-                    </a>
-                  ) : (
-                    <p className="profile-entry__organization">{entry.organization}</p>
-                  )}
-                  <p className="profile-entry__description">{entry.description}</p>
-                </article>
-              ))}
-            </div>
-          </section>
-
-          <section className="profile-section" aria-labelledby="profile-education-title">
-            <h3 className="profile-section__heading" id="profile-education-title">{about.educationTitle}</h3>
-            <div className="profile-timeline">
-              {about.education.map((entry) => (
-                <article className="profile-entry" key={`${entry.title}-${entry.date}`}>
-                  <p className="profile-entry__period">{entry.date}</p>
-                  <h4 className="profile-entry__title">{entry.title}</h4>
-                  <p className="profile-entry__organization">{entry.institution}</p>
-                </article>
-              ))}
-            </div>
-          </section>
-        </div>
-
-        <section className="profile-section profile-skills reveal" aria-labelledby="profile-skills-title">
-          <h3 className="profile-section__heading" id="profile-skills-title">{about.skillsTitle}</h3>
-          <div className="profile-skills__grid">
-            {about.skillGroups.map((group) => (
-              <div className="profile-skill-group" key={group.title}>
-                <h4 className="profile-skill-group__title">{group.title}</h4>
-                <ul className="profile-skill-group__list">
-                  {group.skills.map((skill) => <li key={skill}>{skill}</li>)}
-                </ul>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        <h3 className="profile-section__heading profile-capabilities__heading">{about.capabilitiesTitle}</h3>
+        {/* Numbered List */}
         <div className="numbered-list reveal">
-          {about.capabilities.map((capability) => (
-            <div className="numbered-item" key={capability.number}>
-              <div className="numbered-item__number">{capability.number}</div>
-              <div className="numbered-item__title">{capability.title}</div>
-              <div className="numbered-item__divider" />
-              <div className="numbered-item__desc">{capability.description}</div>
+          <div className="numbered-item">
+            <div className="numbered-item__number">01</div>
+            <div className="numbered-item__title">
+              Full-Stack<br />Development
             </div>
-          ))}
+            <div className="numbered-item__divider"></div>
+            <div className="numbered-item__desc">
+              MERN stack, .NET, REST APIs, microservices, Docker, real-time WebSocket systems, and cloud deployment on Heroku & Vercel.
+            </div>
+          </div>
+
+          <div className="numbered-item">
+            <div className="numbered-item__number">02</div>
+            <div className="numbered-item__title">
+              AI & Machine<br />Learning
+            </div>
+            <div className="numbered-item__divider"></div>
+            <div className="numbered-item__desc">
+              Computer vision with YOLO & EfficientNet, LLM integration via OpenAI & NVIDIA NIM, evolutionary algorithms, and knowledge graphs.
+            </div>
+          </div>
+
+          <div className="numbered-item">
+            <div className="numbered-item__number">03</div>
+            <div className="numbered-item__title">
+              Security &<br />Systems
+            </div>
+            <div className="numbered-item__divider"></div>
+            <div className="numbered-item__desc">
+              Endpoint security daemons, log analysis, credential redaction, C/POSIX programming, compiler design, and multi-threaded networking.
+            </div>
+          </div>
         </div>
       </div>
     </section>

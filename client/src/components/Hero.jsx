@@ -1,7 +1,4 @@
-import { useEffect, useState } from 'react';
-import portfolioContent from '../data/portfolio';
-
-const { hero } = portfolioContent;
+import { useEffect, useRef, useState } from 'react';
 
 const HERO_SLIDES = [
   '/images/hero-slide-urban.webp',
@@ -12,6 +9,44 @@ const HERO_SLIDES = [
 ];
 
 const HERO_SLIDE_INTERVAL_MS = 6000;
+
+function CountUp({ end, duration = 1500 }) {
+  const [count, setCount] = useState(0);
+  const ref = useRef(null);
+  const hasAnimated = useRef(false);
+
+  useEffect(() => {
+    const node = ref.current;
+    if (!node) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && !hasAnimated.current) {
+            hasAnimated.current = true;
+            const start = performance.now();
+            const animate = (now) => {
+              const elapsed = now - start;
+              const progress = Math.min(elapsed / duration, 1);
+              const eased = 1 - Math.pow(1 - progress, 3);
+              setCount(Math.floor(eased * end));
+              if (progress < 1) {
+                requestAnimationFrame(animate);
+              }
+            };
+            requestAnimationFrame(animate);
+          }
+        });
+      },
+      { threshold: 0.3 }
+    );
+
+    observer.observe(node);
+    return () => observer.unobserve(node);
+  }, [end, duration]);
+
+  return <span ref={ref}>{count}+</span>;
+}
 
 export default function Hero() {
   const [slideState, setSlideState] = useState({ active: 0, previous: null });
@@ -83,15 +118,18 @@ export default function Hero() {
         <div className="hero__content">
           <div className="hero__text">
             <h1>
-              {hero.headline.map((line, index) => (
-                <span key={line}>{line}{index < hero.headline.length - 1 && <br />}</span>
-              ))}
+              I Build<br />
+              Modern &<br />
+              Robust Systems
             </h1>
-            <p>{hero.summary}</p>
-            <p className="hero__status">{hero.status}</p>
+            <p>
+              Full-stack developer & AI engineer from Karachi, Pakistan. Engineering
+              robust web applications, intelligent AI systems, and security tools
+              across the entire stack.
+            </p>
             <div className="hero__buttons">
               <a href="#contact" className="btn-primary" onClick={handleCTAClick}>
-                {hero.primaryAction}
+                Get In Touch
               </a>
               <a
                 href="/Muhammad_Fasih_Resume.pdf"
@@ -99,8 +137,32 @@ export default function Hero() {
                 rel="noopener noreferrer"
                 className="btn-outline-white"
               >
-                {hero.secondaryAction}
+                Download Resume
               </a>
+            </div>
+          </div>
+
+          <div className="hero__stats">
+            <div className="hero__stat">
+              <div className="hero__stat-number">
+                <CountUp end={428} />
+                <span></span>
+              </div>
+              <p>GitHub contributions<br />in the last year</p>
+            </div>
+            <div className="hero__stat">
+              <div className="hero__stat-number">
+                <CountUp end={22} duration={1200} />
+                <span></span>
+              </div>
+              <p>Public<br />repositories</p>
+            </div>
+            <div className="hero__stat">
+              <div className="hero__stat-number">
+                <CountUp end={25} duration={1200} />
+                <span></span>
+              </div>
+              <p>Professional<br />certifications</p>
             </div>
           </div>
         </div>

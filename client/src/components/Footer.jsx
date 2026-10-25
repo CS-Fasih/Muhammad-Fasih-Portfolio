@@ -1,32 +1,10 @@
 import useScrollReveal from '../hooks/useScrollReveal';
 import { Link, useLocation } from 'react-router-dom';
-import portfolioContent from '../data/portfolio';
-
-const { footer } = portfolioContent;
-
-function SocialIcon({ icon }) {
-  const letter = { linkedin: 'in', fiverr: 'F', email: '@' }[icon];
-  if (letter) return <span className="footer__social-letter" aria-hidden="true">{letter}</span>;
-
-  return (
-    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-      <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
-    </svg>
-  );
-}
-
-function EmailIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <rect x="2" y="4" width="20" height="16" rx="2" />
-      <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
-    </svg>
-  );
-}
 
 export default function Footer() {
   const sectionRef = useScrollReveal();
   const location = useLocation();
+
   const currentYear = new Date().getFullYear();
 
   const handleSectionClick = (event, sectionId) => {
@@ -47,56 +25,95 @@ export default function Footer() {
     <footer className="footer" ref={sectionRef}>
       <div className="container">
         <div className="footer__grid reveal">
+          {/* Brand Column */}
           <div className="footer__brand">
-            <Link to="/#home" onClick={(event) => handleSectionClick(event, 'home')} className="navbar__logo footer__logo" aria-label={footer.homepageLabel}>
-              {footer.firstName} <span>{footer.lastName}</span>
+            <Link to="/#home" onClick={(event) => handleSectionClick(event, 'home')} className="navbar__logo" style={{ fontSize: '20px', fontWeight: 700, color: '#fff' }}>
+              Muhammad <span style={{ color: '#e8192c' }}>Fasih</span>
             </Link>
-            <p className="footer__brand-desc">{footer.description}</p>
+            <p className="footer__brand-desc">
+              Building production-ready Web, AI, and security systems.
+            </p>
             <div className="footer__social">
-              {footer.socialLinks.map((link) => (
-                <a
-                  key={link.label}
-                  href={link.href}
-                  target={link.href.startsWith('mailto:') ? undefined : '_blank'}
-                  rel={link.href.startsWith('mailto:') ? undefined : 'noopener noreferrer'}
-                  className="footer__social-icon"
-                  aria-label={link.label}
-                >
-                  <SocialIcon icon={link.icon} />
-                </a>
-              ))}
+              {/* GitHub */}
+              <a
+                href="https://github.com/CS-Fasih"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="footer__social-icon"
+                aria-label="GitHub"
+              >
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                </svg>
+              </a>
+              {/* LinkedIn */}
+              <a
+                href="https://linkedin.com/in/muhammad-fasih-19f"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="footer__social-icon"
+                aria-label="LinkedIn"
+              >
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                </svg>
+              </a>
+              {/* Email */}
+              <a
+                href="mailto:muhammadfasih146@gmail.com"
+                className="footer__social-icon"
+                aria-label="Email"
+              >
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="2" y="4" width="20" height="16" rx="2"></rect>
+                  <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
+                </svg>
+              </a>
             </div>
           </div>
 
+          {/* Quick Links Column */}
           <div className="footer__column">
-            <h4>{footer.quickLinksTitle}</h4>
+            <h4>Quick Links</h4>
             <ul>
-              {footer.quickLinks.map((link) => (
-                <li key={link.to}>
-                  <Link
-                    to={link.to}
-                    onClick={link.sectionId ? (event) => handleSectionClick(event, link.sectionId) : undefined}
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
+              <li><Link to="/#work" onClick={(event) => handleSectionClick(event, 'work')}>Work</Link></li>
+              <li><Link to="/activity">My Activity</Link></li>
+              <li><Link to="/#contact" onClick={(event) => handleSectionClick(event, 'contact')}>Contact</Link></li>
             </ul>
           </div>
 
+          {/* Contact Details */}
           <div className="footer__contact">
-            <h4 className="footer__title">{footer.contactTitle}</h4>
+            <h4 className="footer__title">Get In Touch</h4>
+            
             <div className="footer__contact-item">
-              <div className="footer__contact-icon"><EmailIcon /></div>
+              <div className="footer__contact-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                </svg>
+              </div>
               <div className="footer__contact-text">
-                <a href={`mailto:${footer.email}`}>{footer.email}</a>
+                <a href="tel:+923710236798">+92 3710236798</a>
               </div>
             </div>
+            <div className="footer__contact-item">
+              <div className="footer__contact-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="2" y="4" width="20" height="16" rx="2"></rect>
+                  <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
+                </svg>
+              </div>
+              <div className="footer__contact-text">
+                <a href="mailto:muhammadfasih146@gmail.com">muhammadfasih146@gmail.com</a>
+              </div>
+            </div>
+
           </div>
         </div>
 
+        {/* Copyright Bar */}
         <div className="footer__copyright">
-          © {currentYear} {footer.copyrightName}.
+          © {currentYear} Muhammad Fasih.
         </div>
       </div>
     </footer>

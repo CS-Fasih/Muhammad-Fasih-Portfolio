@@ -1,8 +1,5 @@
 import useScrollReveal from '../hooks/useScrollReveal';
 import projects from '../data/projects';
-import portfolioContent from '../data/portfolio';
-
-const { work } = portfolioContent;
 
 export default function Works() {
   const sectionRef = useScrollReveal();
@@ -11,20 +8,17 @@ export default function Works() {
     <section className="works" id="work" ref={sectionRef}>
       <div className="container">
         <div className="works__heading reveal">
-          <h2>{work.title}</h2>
-          <p>{work.description}</p>
+          <h2>My Work</h2>
+          <p>
+            A selection of projects spanning full-stack web development, AI/ML systems,
+            and cyber security tools — all deployed and documented.
+          </p>
         </div>
 
         {projects.map((project) => (
-          <article className="project-card reveal" key={project.id}>
-            <div className={`project-card__image${project.image ? '' : ' project-card__image--placeholder'}`}>
-              {project.image ? (
-                <img src={project.image} alt={project.title} loading="lazy" />
-              ) : (
-                <div className="project-card__image-note" role="img" aria-label={`${project.title}: ${work.missingImageLabel}`}>
-                  {work.missingImageLabel}
-                </div>
-              )}
+          <div className="project-card reveal" key={project.id}>
+            <div className="project-card__image">
+              <img src={project.image} alt={project.title} loading="lazy" />
             </div>
 
             <div className="project-card__info">
@@ -32,25 +26,12 @@ export default function Works() {
                 {project.category}
                 {project.isFyp && (
                   <span className="project-card__fyp-tag">
-                    &nbsp;&nbsp;&mdash;&nbsp;&nbsp;{work.finalYearProjectLabel}
+                    &nbsp;&nbsp;&mdash;&nbsp;&nbsp;Final Year Project
                   </span>
                 )}
               </div>
               <h3 className="project-card__title">{project.title}</h3>
               <p className="project-card__desc">{project.description}</p>
-
-              {project.recognition && (
-                <p className="project-card__recognition">
-                  <span>{work.awardLabel}</span>
-                  {project.recognition}
-                </p>
-              )}
-
-              {project.highlights && (
-                <ul className="project-card__highlights">
-                  {project.highlights.map((highlight) => <li key={highlight}>{highlight}</li>)}
-                </ul>
-              )}
 
               <div className="project-card__tech">
                 {project.techStack.map((tech) => (
@@ -59,26 +40,34 @@ export default function Works() {
               </div>
 
               <div className="project-card__author">
-                <div className="project-card__avatar" aria-hidden="true">{work.authorMark}</div>
+                <div className="project-card__avatar">MF</div>
                 <div className="project-card__author-info">
-                  <span className="project-card__author-name">{work.authorName}</span>
-                  {project.githubUrl && (
-                    <a
-                      href={project.githubUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="project-card__author-url"
-                    >
-                      {project.githubUrl}
-                    </a>
-                  )}
+                  <span className="project-card__author-name">Muhammad Fasih</span>
+                  <a
+                    href={project.githubUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="project-card__author-url"
+                  >
+                    {project.githubUrl.replace('https://github.com/', 'github.com/')}
+                  </a>
                 </div>
               </div>
 
-              {(project.githubUrl || project.liveUrl || project.isClosedSource || project.linksTodo) && (
-                <div className="project-card__links">
+              {(project.githubUrl || project.liveUrl || project.isClosedSource) && (
+                <div style={{ marginTop: '20px', display: 'flex', gap: '12px' }}>
                   {project.isClosedSource ? (
-                    <span className="project-card__closed-source">{work.closedSourceLabel}</span>
+                    <span
+                      className="btn-secondary"
+                      style={{
+                        background: 'rgb(232, 25, 44)',
+                        color: '#fff',
+                        borderColor: 'rgb(232, 25, 44)',
+                        cursor: 'default',
+                      }}
+                    >
+                      Closed Source
+                    </span>
                   ) : project.githubUrl ? (
                     <a
                       href={project.githubUrl}
@@ -86,24 +75,24 @@ export default function Works() {
                       rel="noopener noreferrer"
                       className="btn-secondary"
                     >
-                      {work.githubLinkLabel}
+                      GitHub
                     </a>
                   ) : null}
-                  {project.linksTodo && <span className="project-card__todo">{work.missingLinkLabel}</span>}
                   {project.liveUrl && (
                     <a
                       href={project.liveUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="btn-primary project-card__live-link"
+                      className="btn-primary"
+                      style={{ padding: '10px 28px', fontSize: '12px' }}
                     >
-                      {work.liveLinkLabel}
+                      Live Demo
                     </a>
                   )}
                 </div>
               )}
             </div>
-          </article>
+          </div>
         ))}
       </div>
     </section>
