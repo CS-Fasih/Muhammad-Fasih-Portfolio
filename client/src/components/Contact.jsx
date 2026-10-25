@@ -1,5 +1,8 @@
 import { useState } from 'react';
 import useScrollReveal from '../hooks/useScrollReveal';
+import portfolioContent from '../data/portfolio';
+
+const { contact } = portfolioContent;
 
 export default function Contact() {
   const sectionRef = useScrollReveal();
@@ -41,13 +44,13 @@ export default function Contact() {
       const result = await res.json().catch(() => ({}));
 
       if (res.ok && result.success) {
-        setStatus('Message sent successfully! I\'ll get back to you soon.');
+        setStatus(contact.sentMessage);
         setFormData({ name: '', email: '', subject: '', message: '', website: '' });
       } else {
-        setStatus(result.error || result.message || 'Something went wrong. Please try again or email me directly.');
+        setStatus(result.error || result.message || contact.errorFallback);
       }
     } catch {
-      setStatus('Server unavailable. Please email me at muhammadfasihofficial@proton.me');
+      setStatus(`${contact.unavailablePrefix}${contact.email}`);
     } finally {
       setLoading(false);
     }
@@ -57,17 +60,13 @@ export default function Contact() {
     <section className="contact" id="contact" ref={sectionRef}>
       <div className="container">
         <div className="contact__heading reveal">
-          <h2>Contact</h2>
-          <p>
-            Have a project in mind or want to collaborate? Send me a message or reach 
-            out directly at <strong>+92 3710236798</strong>, and I'll get back to you 
-            as soon as possible.
-          </p>
+          <h2>{contact.title}</h2>
+          <p>{contact.description} <a href={`mailto:${contact.email}`}>{contact.email}</a></p>
         </div>
 
         <form className="contact__form reveal" onSubmit={handleSubmit}>
           <div className="contact__honeypot" aria-hidden="true">
-            <label htmlFor="contact-website">Leave this field empty</label>
+            <label htmlFor="contact-website">{contact.fields.honeypot}</label>
             <input
               id="contact-website"
               type="text"
@@ -81,8 +80,8 @@ export default function Contact() {
           <input
             type="text"
             name="name"
-            placeholder="Your Name"
-            aria-label="Your Name"
+            placeholder={contact.fields.name}
+            aria-label={contact.fields.name}
             className="contact__input"
             value={formData.name}
             onChange={handleChange}
@@ -91,8 +90,8 @@ export default function Contact() {
           <input
             type="email"
             name="email"
-            placeholder="Your Email"
-            aria-label="Your Email"
+            placeholder={contact.fields.email}
+            aria-label={contact.fields.email}
             className="contact__input"
             value={formData.email}
             onChange={handleChange}
@@ -101,8 +100,8 @@ export default function Contact() {
           <input
             type="text"
             name="subject"
-            placeholder="Subject"
-            aria-label="Subject"
+            placeholder={contact.fields.subject}
+            aria-label={contact.fields.subject}
             className="contact__input full-width"
             value={formData.subject}
             onChange={handleChange}
@@ -110,8 +109,8 @@ export default function Contact() {
           />
           <textarea
             name="message"
-            placeholder="Your Message"
-            aria-label="Your Message"
+            placeholder={contact.fields.message}
+            aria-label={contact.fields.message}
             className="contact__textarea full-width"
             value={formData.message}
             onChange={handleChange}
@@ -119,7 +118,7 @@ export default function Contact() {
           />
           <div className="full-width contact__submit">
             <button type="submit" className="btn-primary" disabled={loading}>
-              {loading ? 'Sending...' : 'Send Message'}
+              {loading ? contact.sendingLabel : contact.submitLabel}
             </button>
           </div>
           {status && <div className="contact__success full-width" role="status" aria-live="polite">{status}</div>}
