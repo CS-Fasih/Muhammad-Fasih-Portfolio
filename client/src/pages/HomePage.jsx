@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import Hero from '../components/Hero';
-import Marquee from '../components/Marquee';
 import About from '../components/About';
 import Experience from '../components/Experience';
 import Works from '../components/Works';
@@ -10,7 +9,6 @@ import Certifications from '../components/Certifications';
 import Contact from '../components/Contact';
 import Footer from '../components/Footer';
 import Chatbot from '../components/Chatbot';
-import CursorGlow from '../components/CursorGlow';
 
 export default function HomePage() {
   useEffect(() => {
@@ -20,11 +18,9 @@ export default function HomePage() {
 
   return (
     <div className="site">
-      <CursorGlow />
       <Navbar />
       <main id="main">
         <Hero />
-        <Marquee />
         <About />
         <Experience />
         <Works />

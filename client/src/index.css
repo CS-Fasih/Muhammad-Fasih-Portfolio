@@ -165,9 +165,9 @@ button {
   width: 56px;
   height: 56px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #ff3b4e 0%, #ff7a45 100%);
-  box-shadow: 0 12px 34px -10px rgba(255, 80, 60, 0.7);
-  color: var(--text-white);
+  background: #ecebe6;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  color: #0d0d0c;
   border: none;
   cursor: pointer;
   display: flex;
@@ -177,7 +177,7 @@ button {
 }
 
 .chatbot-bubble:hover {
-  transform: scale(1.1);
+  transform: scale(1.05);
 }
 
 .chatbot-bubble--open {
