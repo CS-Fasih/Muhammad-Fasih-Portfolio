@@ -1,6 +1,6 @@
 # Muhammad Fasih — Portfolio
 
-A responsive React portfolio with an editorial black, white, and red design. The site includes the original single-page portfolio, a public activity feed, a private activity dashboard, serverless API routes, MongoDB Atlas persistence, signed Cloudinary image uploads, and the existing portfolio chatbot.
+A responsive React portfolio with a dark, animated design: a morphing 3D particle hero, scroll-driven reveals, an experience timeline, and cursor-reactive cards. The site includes the original single-page portfolio, a public activity feed, a private activity dashboard, serverless API routes, MongoDB Atlas persistence, signed Cloudinary image uploads, and the existing portfolio chatbot.
 
 **Live:** [muhammadfasih.vercel.app](https://muhammadfasih.vercel.app)
 
@@ -174,8 +174,10 @@ Vercel rewrites non-API browser routes to the React entry point while keeping `/
 ├── client/              # React/Vite application
 │   └── src/
 │       ├── components/  # Shared and activity UI
+│       ├── data/        # Homepage content (profile.js holds roles, experience, focus areas)
+│       ├── styles/      # portfolio.css: homepage, navbar, and footer design system
 │       ├── pages/       # Home, activity, login, and admin pages
-│       └── index.css    # Existing Vanilla CSS design system
+│       └── index.css    # Base tokens, chatbot, activity, and admin styles
 ├── lib/                 # Database, authentication, validation, Cloudinary
 ├── models/              # Mongoose models
 ├── .env.example         # Placeholder server environment variables

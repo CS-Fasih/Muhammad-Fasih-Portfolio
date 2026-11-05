@@ -73,10 +73,10 @@ const otherProjects = [
   },
   {
     id: 10,
-    title: "KARTEVO",
+    title: "Kartevo",
     category: "Web Dev",
-    description: "Web application project showcasing modern development practices.",
-    techStack: ["JavaScript"],
+    description: "Multi-vendor MERN marketplace for Pakistan's informal sellers, with WhatsApp-native onboarding and cash-on-delivery checkout.",
+    techStack: ["MongoDB", "Express", "React", "Node.js", "Twilio OTP"],
     githubUrl: "https://github.com/CS-Fasih/KARTEVO",
   },
   {
