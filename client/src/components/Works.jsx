@@ -1,99 +1,58 @@
 import useScrollReveal from '../hooks/useScrollReveal';
+import ProjectFigure from './ProjectFigure';
 import projects from '../data/projects';
 
 export default function Works() {
-  const sectionRef = useScrollReveal();
+  const sectionRef = useScrollReveal(0.2);
 
   return (
-    <section className="works" id="work" ref={sectionRef}>
+    <section className="section works" id="work" ref={sectionRef}>
       <div className="container">
-        <div className="works__heading reveal">
-          <h2>My Work</h2>
-          <p>
-            A selection of projects spanning full-stack web development, AI/ML systems,
-            and cyber security tools — all deployed and documented.
-          </p>
-        </div>
+        <header className="section-head reveal">
+          <h2>Selected work</h2>
+          <p className="section-head__note">Each diagram shows how the project works</p>
+        </header>
 
-        {projects.map((project) => (
-          <div className="project-card reveal" key={project.id}>
-            <div className="project-card__image">
-              <img src={project.image} alt={project.title} loading="lazy" />
-            </div>
-
-            <div className="project-card__info">
-              <div className="project-card__category">
-                {project.category}
-                {project.isFyp && (
-                  <span className="project-card__fyp-tag">
-                    &nbsp;&nbsp;&mdash;&nbsp;&nbsp;Final Year Project
-                  </span>
-                )}
-              </div>
-              <h3 className="project-card__title">{project.title}</h3>
-              <p className="project-card__desc">{project.description}</p>
-
-              <div className="project-card__tech">
-                {project.techStack.map((tech) => (
-                  <span key={tech}>{tech}</span>
-                ))}
-              </div>
-
-              <div className="project-card__author">
-                <div className="project-card__avatar">MF</div>
-                <div className="project-card__author-info">
-                  <span className="project-card__author-name">Muhammad Fasih</span>
-                  <a
-                    href={project.githubUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="project-card__author-url"
-                  >
-                    {project.githubUrl.replace('https://github.com/', 'github.com/')}
-                  </a>
+        <div className="projects">
+          {projects.map((project, index) => (
+            <article className="project" key={project.id}>
+              <div className="project__figure reveal">
+                <div className="project__clip">
+                  <ProjectFigure id={project.figure} />
                 </div>
               </div>
 
-              {(project.githubUrl || project.liveUrl || project.isClosedSource) && (
-                <div style={{ marginTop: '20px', display: 'flex', gap: '12px' }}>
-                  {project.isClosedSource ? (
-                    <span
-                      className="btn-secondary"
-                      style={{
-                        background: 'rgb(232, 25, 44)',
-                        color: '#fff',
-                        borderColor: 'rgb(232, 25, 44)',
-                        cursor: 'default',
-                      }}
-                    >
-                      Closed Source
-                    </span>
-                  ) : project.githubUrl ? (
-                    <a
-                      href={project.githubUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="btn-secondary"
-                    >
-                      GitHub
-                    </a>
-                  ) : null}
-                  {project.liveUrl && (
-                    <a
-                      href={project.liveUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="btn-primary"
-                      style={{ padding: '10px 28px', fontSize: '12px' }}
-                    >
-                      Live Demo
+              <div className="project__info reveal">
+                <p className="project__meta">
+                  <span className="project__index">{String(index + 1).padStart(2, '0')}</span>
+                  <span>{project.category}</span>
+                </p>
+                <h3 className="project__title">{project.title}</h3>
+                <p className="project__desc">{project.description}</p>
+                {project.note && <p className="project__note">{project.note}</p>}
+
+                <dl className="project__stack">
+                  <dt>Stack</dt>
+                  <dd>{project.stack}</dd>
+                </dl>
+
+                <div className="project__links">
+                  {project.githubUrl && (
+                    <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" className="text-link">
+                      Source on GitHub
                     </a>
                   )}
+                  {project.liveUrl && (
+                    <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" className="text-link">
+                      Live site
+                    </a>
+                  )}
+                  {project.isClosedSource && <span className="project__private">Private repository</span>}
                 </div>
-              )}
-            </div>
-          </div>
-        ))}
+              </div>
+            </article>
+          ))}
+        </div>
       </div>
     </section>
   );

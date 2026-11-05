@@ -1,174 +1,109 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
+import LocalTime from './LocalTime';
+import { heroFacts } from '../data/profile';
 
-const HERO_SLIDES = [
-  '/images/hero-slide-urban.webp',
-  '/images/hero-slide-datacenter.webp',
-  '/images/hero-slide-processor.webp',
-  '/images/hero-slide-neural.webp',
-  '/images/hero-slide-vault.webp',
-];
+function scrollToId(event, id) {
+  const section = document.getElementById(id);
+  if (!section) return;
+  event.preventDefault();
+  window.scrollTo({ top: Math.max(section.offsetTop - 64, 0), behavior: 'smooth' });
+}
 
-const HERO_SLIDE_INTERVAL_MS = 6000;
-
-function CountUp({ end, duration = 1500 }) {
-  const [count, setCount] = useState(0);
+// Moves the portrait a little slower than the page while the hero is on screen.
+function useParallax(strength = 0.06, limit = 30) {
   const ref = useRef(null);
-  const hasAnimated = useRef(false);
 
   useEffect(() => {
     const node = ref.current;
-    if (!node) return;
+    if (!node || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined;
+    let frame = 0;
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting && !hasAnimated.current) {
-            hasAnimated.current = true;
-            const start = performance.now();
-            const animate = (now) => {
-              const elapsed = now - start;
-              const progress = Math.min(elapsed / duration, 1);
-              const eased = 1 - Math.pow(1 - progress, 3);
-              setCount(Math.floor(eased * end));
-              if (progress < 1) {
-                requestAnimationFrame(animate);
-              }
-            };
-            requestAnimationFrame(animate);
-          }
-        });
-      },
-      { threshold: 0.3 }
-    );
+    const update = () => {
+      frame = 0;
+      const shift = Math.min(window.scrollY * strength, limit);
+      node.style.transform = `translate3d(0, ${shift.toFixed(1)}px, 0) scale(1.15)`;
+    };
+    const schedule = () => {
+      if (!frame) frame = window.requestAnimationFrame(update);
+    };
 
-    observer.observe(node);
-    return () => observer.unobserve(node);
-  }, [end, duration]);
+    update();
+    window.addEventListener('scroll', schedule, { passive: true });
+    return () => {
+      window.cancelAnimationFrame(frame);
+      window.removeEventListener('scroll', schedule);
+    };
+  }, [strength, limit]);
 
-  return <span ref={ref}>{count}+</span>;
+  return ref;
 }
 
 export default function Hero() {
-  const [slideState, setSlideState] = useState({ active: 0, previous: null });
-
-  useEffect(() => {
-    const motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)');
-    let timerId;
-
-    const advanceSlide = () => {
-      setSlideState(({ active }) => ({
-        active: (active + 1) % HERO_SLIDES.length,
-        previous: active,
-      }));
-    };
-
-    const syncTimer = () => {
-      window.clearInterval(timerId);
-      timerId = undefined;
-
-      if (!motionPreference.matches && !document.hidden) {
-        timerId = window.setInterval(advanceSlide, HERO_SLIDE_INTERVAL_MS);
-      }
-    };
-
-    syncTimer();
-    document.addEventListener('visibilitychange', syncTimer);
-    motionPreference.addEventListener('change', syncTimer);
-
-    return () => {
-      window.clearInterval(timerId);
-      document.removeEventListener('visibilitychange', syncTimer);
-      motionPreference.removeEventListener('change', syncTimer);
-    };
-  }, []);
-
-  const handleCTAClick = (e) => {
-    e.preventDefault();
-    const el = document.getElementById('contact');
-    if (el) {
-      window.scrollTo({ top: el.offsetTop - 70, behavior: 'smooth' });
-    }
-  };
+  const portraitRef = useParallax();
 
   return (
     <section className="hero" id="home">
-      <div className="hero__slider" aria-hidden="true">
-        {HERO_SLIDES.map((src, index) => {
-          const stateClass = index === slideState.active
-            ? 'is-active'
-            : index === slideState.previous
-              ? 'is-previous'
-              : '';
-
-          return (
-            <img
-              key={src}
-              src={src}
-              alt=""
-              className={`hero__slide ${stateClass}`}
-              decoding="async"
-              fetchPriority={index === 0 ? 'high' : 'auto'}
-              loading={index === 0 ? 'eager' : 'lazy'}
-            />
-          );
-        })}
-      </div>
-
       <div className="container">
-        <div className="hero__content">
-          <div className="hero__text">
-            <h1>
-              I Build<br />
-              Modern &<br />
-              Robust Systems
-            </h1>
-            <p>
-              Full-stack developer & AI engineer from Karachi, Pakistan. Engineering
-              robust web applications, intelligent AI systems, and security tools
-              across the entire stack.
-            </p>
-            <div className="hero__buttons">
-              <a href="#contact" className="btn-primary" onClick={handleCTAClick}>
-                Get In Touch
-              </a>
-              <a
-                href="/Muhammad_Fasih_Resume.pdf"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn-outline-white"
-              >
-                Download Resume
-              </a>
-            </div>
-          </div>
-
-          <div className="hero__stats">
-            <div className="hero__stat">
-              <div className="hero__stat-number">
-                <CountUp end={428} />
-                <span></span>
-              </div>
-              <p>GitHub contributions<br />in the last year</p>
-            </div>
-            <div className="hero__stat">
-              <div className="hero__stat-number">
-                <CountUp end={22} duration={1200} />
-                <span></span>
-              </div>
-              <p>Public<br />repositories</p>
-            </div>
-            <div className="hero__stat">
-              <div className="hero__stat-number">
-                <CountUp end={25} duration={1200} />
-                <span></span>
-              </div>
-              <p>Professional<br />certifications</p>
-            </div>
-          </div>
+        <div className="hero__meta">
+          <span>Software engineer</span>
+          <span>Karachi, Pakistan</span>
+          <span className="hero__clock">
+            <LocalTime /> PKT
+          </span>
         </div>
+
+        <div className="hero__main">
+          <div className="hero__text">
+            <h1 className="hero__name">
+              <span className="hero__line"><span>Muhammad</span></span>
+              <span className="hero__line"><span>Fasih</span></span>
+            </h1>
+
+            <p className="hero__intro">
+              I research and build AR/VR systems at NED. Before that I spent three months as an XR
+              Engineer at AIDL, making VR and AR simulations in WorldViz Vizard. I also work on
+              computer vision, Linux tooling and web apps.
+            </p>
+
+            <div className="hero__links">
+              <a href="#work" className="text-link" onClick={(event) => scrollToId(event, 'work')}>
+                Selected work
+              </a>
+              <a href="/Muhammad_Fasih_Resume.pdf" target="_blank" rel="noopener noreferrer" className="text-link">
+                Résumé (PDF)
+              </a>
+              <a href="mailto:muhammadfasih146@gmail.com" className="text-link">
+                Email
+              </a>
+            </div>
+          </div>
+
+          <figure className="hero__portrait">
+            <div className="hero__portrait-frame">
+              <img
+                ref={portraitRef}
+                src="/images/about-photo.png"
+                alt="Muhammad Fasih"
+                width="885"
+                height="1140"
+                fetchPriority="high"
+              />
+            </div>
+          </figure>
+        </div>
+
+        <dl className="hero__facts">
+          {heroFacts.map((fact) => (
+            <div className="hero__fact" key={fact.label}>
+              <dt>{fact.label}</dt>
+              <dd>
+                <span className="hero__fact-value">{fact.value}</span>
+                <span className="hero__fact-detail">{fact.detail}</span>
+              </dd>
+            </div>
+          ))}
+        </dl>
       </div>
-
-
     </section>
   );
 }
