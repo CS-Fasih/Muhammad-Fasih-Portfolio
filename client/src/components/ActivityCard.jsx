@@ -72,7 +72,7 @@ function ActivityImages({ images, title }) {
             <img
               className="activity-card__image"
               src={source}
-              alt={image.alt || `${title} — image ${index + 1}`}
+              alt={image.alt || `${title}, image ${index + 1}`}
               loading="lazy"
               decoding="async"
             />
@@ -162,21 +162,12 @@ export default function ActivityCard({ activity, isDeepLinked = false }) {
       aria-labelledby={`activity-title-${cardKey}`}
     >
       <header className="activity-card__header">
-        <div className="activity-card__avatar" aria-hidden="true">MF</div>
-        <div className="activity-card__author">
-          <p className="activity-card__author-name">Muhammad Fasih</p>
-          <div className="activity-card__meta">
-            <span className="activity-card__category">{activity.category}</span>
-            {occurredAt && (
-              <>
-                <span aria-hidden="true">•</span>
-                <time dateTime={new Date(occurredAt).toISOString()}>
-                  {formatActivityDate(occurredAt)}
-                </time>
-              </>
-            )}
-          </div>
-        </div>
+        {occurredAt && (
+          <time className="activity-card__date" dateTime={new Date(occurredAt).toISOString()}>
+            {formatActivityDate(occurredAt)}
+          </time>
+        )}
+        <span className="activity-card__category">{activity.category}</span>
         {activity.featured && <span className="activity-card__featured">Featured</span>}
       </header>
 

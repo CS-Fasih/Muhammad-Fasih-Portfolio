@@ -48,7 +48,7 @@ export default function Chatbot() {
   const [messages, setMessages] = useState([
     {
       role: 'bot',
-      text: "Hi! I'm Fasih's AI assistant. Ask me anything about his projects, skills, experience, or availability.",
+      text: "Ask anything about Fasih's projects, experience, skills or availability.",
     },
   ]);
   const [input, setInput] = useState('');
@@ -170,9 +170,8 @@ export default function Chatbot() {
         {/* Header */}
         <div className="chatbot-header">
           <div className="chatbot-header__info">
-            <span className="chatbot-header__title" style={{ fontSize: '15px', fontWeight: '600', letterSpacing: '0.5px' }}>
-              Ask my Assistant
-            </span>
+            <span className="chatbot-header__title">Ask about my work</span>
+            <span className="chatbot-header__sub">An AI assistant that answers from my portfolio notes</span>
           </div>
           <button
             className="chatbot-header__close"
@@ -190,13 +189,6 @@ export default function Chatbot() {
         <div className="chatbot-messages">
           {messages.map((msg, i) => (
             <div key={i} className={`chatbot-msg chatbot-msg--${msg.role}`}>
-              {msg.role === 'bot' && (
-                <div className="chatbot-msg__avatar">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
-                  </svg>
-                </div>
-              )}
               {msg.role === 'bot' ? (
                 <div
                   className="chatbot-msg__bubble"
@@ -209,11 +201,6 @@ export default function Chatbot() {
           ))}
           {isLoading && (
             <div className="chatbot-msg chatbot-msg--bot">
-              <div className="chatbot-msg__avatar">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
-                </svg>
-              </div>
               <div className="chatbot-msg__bubble chatbot-typing">
                 <span className="chatbot-typing__dot" />
                 <span className="chatbot-typing__dot" />
@@ -229,8 +216,8 @@ export default function Chatbot() {
           <input
             ref={inputRef}
             type="text"
-            placeholder="Ask about projects, skills..."
-            aria-label="Ask about projects, skills..."
+            placeholder="Ask a question"
+            aria-label="Ask a question about Fasih's work"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}

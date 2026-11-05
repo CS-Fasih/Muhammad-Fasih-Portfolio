@@ -60,6 +60,11 @@ export default function ActivityPage() {
   const requestSequence = useRef(0);
   const fetchedDeepLinks = useRef(new Set());
 
+  useEffect(() => {
+    document.body.classList.add('theme-dark');
+    return () => document.body.classList.remove('theme-dark');
+  }, []);
+
   const loadActivities = useCallback(async (category, requestedPage, append = false) => {
     activeRequest.current?.abort();
     const controller = new AbortController();
@@ -171,15 +176,20 @@ export default function ActivityPage() {
   const retry = () => loadActivities(selectedCategory, 1);
 
   return (
-    <>
+    <div className="site">
       <Navbar />
-      <main className="activity-page">
+      <main className="activity-page container">
         <header className="activity-page__header">
-          <div className="activity-page__header-inner">
-            <p className="activity-page__eyebrow">Updates &amp; progress</p>
-            <h1>My Activity</h1>
-            <p>Updates on what I’m building, learning, attending, and achieving.</p>
+          <div className="activity-page__meta">
+            <span>Notes and updates</span>
+            <span>Karachi, Pakistan</span>
           </div>
+          <h1 className="activity-page__title">
+            <span className="hero__line"><span>Activity</span></span>
+          </h1>
+          <p className="activity-page__intro">
+            Short notes on what I am building, learning, attending and finishing.
+          </p>
         </header>
 
         <section className="activity-page__content" aria-labelledby="activity-feed-title">
@@ -204,17 +214,16 @@ export default function ActivityPage() {
 
             {feedStatus === 'error' && (
               <div className="activity-feed__state" role="alert">
-                <h3>Activity feed unavailable</h3>
+                <h3>The feed could not be loaded</h3>
                 <p>{errorMessage}</p>
-                <button type="button" className="btn-primary" onClick={retry}>Try Again</button>
+                <button type="button" className="text-link" onClick={retry}>Try again</button>
               </div>
             )}
 
             {feedStatus === 'success' && activities.length === 0 && (
               <div className="activity-feed__state activity-feed__state--empty">
-                <span className="activity-feed__state-mark" aria-hidden="true">MF</span>
-                <h3>No activities published yet.</h3>
-                <p>New updates will appear here soon.</p>
+                <h3>Nothing posted yet</h3>
+                <p>New updates will show up here.</p>
               </div>
             )}
 
@@ -237,12 +246,12 @@ export default function ActivityPage() {
                   </p>
                   {hasMore && (
                     <button
-                      className="btn-secondary activity-feed__load-more"
+                      className="button activity-feed__load-more"
                       type="button"
                       disabled={isLoadingMore}
                       onClick={() => loadActivities(selectedCategory, page + 1, true)}
                     >
-                      {isLoadingMore ? 'Loading…' : 'Load More'}
+                      {isLoadingMore ? 'Loading' : 'Load more'}
                     </button>
                   )}
                   {isLoadingMore && <span className="sr-only" role="status">Loading more activities…</span>}
@@ -257,6 +266,6 @@ export default function ActivityPage() {
       </main>
       <Footer />
       <ScrollToTop />
-    </>
+    </div>
   );
 }
