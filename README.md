@@ -180,9 +180,22 @@ Vercel rewrites non-API browser routes to the React entry point while keeping `/
 │       └── index.css    # Base tokens, chatbot, activity, and admin styles
 ├── lib/                 # Database, authentication, validation, Cloudinary
 ├── models/              # Mongoose models
+├── resume/              # LaTeX source and PDF of the resume
 ├── .env.example         # Placeholder server environment variables
 └── vercel.json          # Build, headers, API, and SPA route handling
 ```
+
+## Resume
+
+The resume is written in LaTeX at `resume/Muhammad_Fasih_Resume.tex`. Rebuild it with:
+
+```bash
+cd resume
+pdflatex Muhammad_Fasih_Resume.tex
+cp Muhammad_Fasih_Resume.pdf ../client/public/Muhammad_Fasih_Resume.pdf
+```
+
+The site links to `client/public/Muhammad_Fasih_Resume.pdf`, so copy the new PDF there after each change.
 
 ## Author
 

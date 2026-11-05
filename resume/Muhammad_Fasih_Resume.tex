@@ -1,0 +1,151 @@
+% Resume of Muhammad Fasih
+% Build: pdflatex Muhammad_Fasih_Resume.tex
+% The compiled PDF is copied to client/public/Muhammad_Fasih_Resume.pdf for the website.
+
+\documentclass[a4paper,10pt]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{XCharter}
+\usepackage[margin=0.5in,top=0.45in,bottom=0.4in]{geometry}
+\usepackage{microtype}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage{tabularx}
+\usepackage{xcolor}
+\usepackage[hidelinks]{hyperref}
+
+\definecolor{ink}{HTML}{1A1A1A}
+\definecolor{muted}{HTML}{5A5A5A}
+\definecolor{accent}{HTML}{B3261E}
+\color{ink}
+
+\hypersetup{
+  pdftitle={Muhammad Fasih - Resume},
+  pdfauthor={Muhammad Fasih},
+  pdfsubject={Resume},
+  pdfkeywords={AR/VR, XR, Research Scholar, NED, Software Engineer, Computer Vision, Karachi}
+}
+
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\tabcolsep}{0pt}
+\linespread{1.0}
+
+% Section headings: small caps, thin rule underneath
+\titleformat{\section}
+  {\large\scshape\color{ink}}
+  {}{0pt}{}
+  [\vspace{-6pt}{\color{muted}\rule{\linewidth}{0.4pt}}]
+\titlespacing*{\section}{0pt}{7pt}{4pt}
+
+\setlist[itemize]{leftmargin=12pt,itemsep=1pt,topsep=2pt,parsep=0pt,partopsep=0pt,label={\color{muted}\textbullet}}
+
+% \entry{Title}{Dates}{Organisation}{Location}
+\newcommand{\entry}[4]{%
+  \begin{tabularx}{\linewidth}{@{}X r@{}}
+    \textbf{#1} & #2 \\
+    \textit{#3} & \textit{\color{muted}#4} \\
+  \end{tabularx}\vspace{1pt}}
+
+% \project{Name}{Stack}{Link text}{URL}
+\newcommand{\project}[4]{%
+  \begin{tabularx}{\linewidth}{@{}X r@{}}
+    \textbf{#1} \;{\color{muted}\small #2} & \small\href{#4}{#3} \\
+  \end{tabularx}\vspace{-1pt}}
+
+\begin{document}
+
+%-------------------------------------------------- Header
+\begin{center}
+  {\fontsize{22}{24}\selectfont\textbf{Muhammad Fasih}}\\[4pt]
+  {\color{muted}Research Scholar \& AR/VR Systems Developer}\\[4pt]
+  \small
+  Karachi, Pakistan \;\textperiodcentered\;
+  \href{tel:+923710236798}{+92 371 0236798} \;\textperiodcentered\;
+  \href{mailto:muhammadfasih146@gmail.com}{muhammadfasih146@gmail.com} \;\textperiodcentered\;
+  \href{https://muhammadfasih.vercel.app}{muhammadfasih.vercel.app}\\[1pt]
+  \href{https://github.com/CS-Fasih}{github.com/CS-Fasih} \;\textperiodcentered\;
+  \href{https://linkedin.com/in/muhammad-fasih-19f}{linkedin.com/in/muhammad-fasih-19f} \;\textperiodcentered\;
+  \href{https://orcid.org/0009-0000-5293-4890}{ORCID 0009-0000-5293-4890}
+\end{center}
+\vspace{-4pt}
+
+%-------------------------------------------------- Experience
+\section{Experience}
+\entry{Research Scholar \& AR/VR Systems Developer}{Nov 2026 -- Present}{NED}{Karachi, Pakistan}
+\begin{itemize}
+  \item Research and development of augmented and virtual reality systems.
+\end{itemize}
+\vspace{2pt}
+
+\entry{XR Engineer}{Aug 2026 -- Oct 2026}{AIDL (Associated Instrument Distributors), authorized WorldViz distributor in Pakistan}{Karachi, Pakistan}
+\begin{itemize}
+  \item Built interactive VR and AR simulations with WorldViz Vizard and Python.
+  \item Modelled and prepared 3D assets for the simulation scenes in Blender.
+\end{itemize}
+
+%-------------------------------------------------- Education
+\section{Education}
+\entry{BS Computer Science}{2022 -- 2026}{Dawood University of Engineering \& Technology (DUET)}{Karachi, Pakistan}
+\begin{itemize}
+  \item Final year project: GeoExtract (below). 3rd place, FYDP poster competition, June 2026.
+  \item Coursework: Computer Vision, Evolutionary Computation, Database Systems, Data Science, Embedded Systems.
+\end{itemize}
+
+%-------------------------------------------------- Projects
+\section{Projects}
+\project{GeoExtract}{Python, FastAPI, PyTorch, YOLOv11x-seg, EfficientNet-B2, Qwen2.5-VL, React}{Private repository}{https://github.com/GeoExtract}
+\begin{itemize}
+  \item Vision-language system for satellite images: a Qwen2.5-1.5B router sends each question to YOLOv11x-seg (buildings), EfficientNet-B2 (land use) or a LoRA-tuned Qwen2.5-VL 7B (visual Q\&A).
+  \item Trained on SpaceNet, WHU and INRIA on a RunPod A40; mAP50 of 81.2\% (box) and 79.6\% (mask). Served with FastAPI on Modal.
+\end{itemize}
+\vspace{1pt}
+
+\project{OpSecGuard API}{Python, FastAPI, RE2, WebSocket, Docker}{github.com/CS-Fasih/OpSecGuard-API}{https://github.com/CS-Fasih/OpSecGuard-API}
+\begin{itemize}
+  \item Self-hosted service that redacts API keys, tokens and database URIs from production logs. Eight detectors on google-re2; 30,000+ lines per second at 48 ms P99.
+\end{itemize}
+\vspace{1pt}
+
+\project{Sentinel EDR}{C, POSIX, inotify, ClamAV, systemd, Electron}{github.com/CS-Fasih/Endpoint-Security-Quarantine-Tool-for-Linux}{https://github.com/CS-Fasih/Endpoint-Security-Quarantine-Tool-for-Linux}
+\begin{itemize}
+  \item Linux endpoint security daemon that watches /home and /tmp with inotify, scans new files through ClamAV over a UNIX socket and quarantines infected files with a JSON manifest.
+\end{itemize}
+\vspace{1pt}
+
+\project{Omni-Agent}{TypeScript, Node.js}{github.com/CS-Fasih/Omni-Agent}{https://github.com/CS-Fasih/Omni-Agent}
+\begin{itemize}
+  \item Bring-your-own-key CLI agent for Groq, Gemini, Cerebras, SambaNova and OpenRouter. Switches provider when rate-limited and compacts context to fit smaller models. Published as \texttt{npx omnillm}.
+\end{itemize}
+\vspace{1pt}
+
+\project{TrueCost}{React, TypeScript, Express, PostgreSQL, SendGrid}{github.com/CS-Fasih/TrueCost}{https://github.com/CS-Fasih/TrueCost}
+\begin{itemize}
+  \item Tracks prices across Amazon, Shopee, Lazada and Flipkart using Keepa, SerpApi and ScraperAPI, recommends buying now or waiting, and sends email alerts on price drops.
+\end{itemize}
+
+%-------------------------------------------------- Skills
+\section{Skills}
+\begin{tabularx}{\linewidth}{@{}l@{\hspace{10pt}}X@{}}
+  \textbf{XR and 3D}      & WorldViz Vizard, Unity, Blender \\
+  \textbf{Languages}      & Python, JavaScript, TypeScript, C, C\#, SQL, Bash \\
+  \textbf{AI and vision}  & PyTorch, Ultralytics YOLO, Hugging Face Transformers, LoRA fine-tuning, scikit-learn, pandas, NumPy \\
+  \textbf{Web and backend}& React, Next.js, Node.js, Express, FastAPI, .NET 8, REST, WebSocket \\
+  \textbf{Data and tools} & PostgreSQL, MongoDB, SQLite, Redis, Neo4j, Docker, Linux, Git, Vercel, Modal, RunPod \\
+\end{tabularx}
+
+%-------------------------------------------------- Certifications
+\section{Certifications}
+Meta Back-End and Front-End Development (2023) \;\textperiodcentered\;
+Open Source AI with Python and Hugging Face, Frontend Masters (2026) \;\textperiodcentered\;
+Learning Docker, LinkedIn (2026) \;\textperiodcentered\;
+Machine Learning with NumPy, pandas and scikit-learn, Educative (2025). {\color{muted}25 in total, listed on LinkedIn.}
+
+%-------------------------------------------------- Other
+\section{Other}
+Freelance work on Fiverr (\href{https://www.fiverr.com/cs_fasih}{cs\_fasih}) in AI/ML, Python and MERN development \;\textperiodcentered\;
+Competitive chess, rated around 2200 \;\textperiodcentered\;
+Languages: English, Urdu
+
+\end{document}
