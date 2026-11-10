@@ -1,9 +1,13 @@
 import { useState } from 'react';
 import useScrollReveal from '../hooks/useScrollReveal';
+import SectionHead from './SectionHead';
 import certifications from '../data/certifications';
 
 const PAGE_SIZE = 8;
 const categories = ['All', ...new Set(certifications.map((cert) => cert.category))];
+const countFor = (category) => (category === 'All'
+  ? certifications.length
+  : certifications.filter((cert) => cert.category === category).length);
 
 export default function Certifications() {
   const sectionRef = useScrollReveal();
@@ -23,52 +27,52 @@ export default function Certifications() {
   return (
     <section className="section certs" id="certifications" ref={sectionRef}>
       <div className="container">
-        <header className="section-head reveal">
-          <h2>Certifications</h2>
-          <a
-            href="https://www.linkedin.com/in/muhammad-fasih-19f/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-link section-head__note"
-          >
-            Verify on LinkedIn
-          </a>
-        </header>
+        <SectionHead index="05" title="Certifications" note={`${certifications.length} completed courses`} />
 
-        <div className="tabs tabs--wrap reveal" role="group" aria-label="Filter certifications by category">
-          {categories.map((tab) => (
-            <button
-              key={tab}
-              type="button"
-              className={`tab ${activeTab === tab ? 'is-active' : ''}`}
-              aria-pressed={activeTab === tab}
-              onClick={() => selectTab(tab)}
+        <div className="certs__layout">
+          <aside className="certs__side reveal">
+            <div className="pills pills--stack" role="group" aria-label="Filter certifications by category">
+              {categories.map((tab) => (
+                <button
+                  key={tab}
+                  type="button"
+                  className={`pill${activeTab === tab ? ' is-active' : ''}`}
+                  aria-pressed={activeTab === tab}
+                  onClick={() => selectTab(tab)}
+                >
+                  {tab}
+                  <span className="pill__count">{countFor(tab)}</span>
+                </button>
+              ))}
+            </div>
+            <a
+              href="https://www.linkedin.com/in/muhammad-fasih-19f/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="link certs__verify"
             >
-              {tab}
-              <sup>
-                {tab === 'All' ? certifications.length : certifications.filter((cert) => cert.category === tab).length}
-              </sup>
-            </button>
-          ))}
-        </div>
+              Verify on LinkedIn
+            </a>
+          </aside>
 
-        <div className="reveal">
-          <ul className="cert-table" key={activeTab}>
-            {visible.map((cert, index) => (
-              <li className="cert-table__row" key={cert.id} style={{ '--i': index % PAGE_SIZE }}>
-                <span className="cert-table__title">{cert.title}</span>
-                <span className="cert-table__provider">{cert.provider}</span>
-                <span className="cert-table__date">{cert.date}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
+          <div className="certs__main reveal">
+            <ul className="cert-list" key={activeTab}>
+              {visible.map((cert, index) => (
+                <li className="cert" key={cert.id} style={{ '--i': index % PAGE_SIZE }}>
+                  <span className="cert__title">{cert.title}</span>
+                  <span className="cert__provider">{cert.provider}</span>
+                  <span className="cert__date">{cert.date}</span>
+                </li>
+              ))}
+            </ul>
 
-        {filtered.length > PAGE_SIZE && (
-          <button type="button" className="text-link certs__toggle" onClick={() => setExpanded((open) => !open)}>
-            {expanded ? 'Show fewer' : `Show all ${filtered.length}`}
-          </button>
-        )}
+            {filtered.length > PAGE_SIZE && (
+              <button type="button" className="btn btn--sm btn--ghost certs__toggle" onClick={() => setExpanded((open) => !open)}>
+                {expanded ? 'Show fewer' : `Show all ${filtered.length}`}
+              </button>
+            )}
+          </div>
+        </div>
       </div>
     </section>
   );

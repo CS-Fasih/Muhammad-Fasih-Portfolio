@@ -1,15 +1,24 @@
 import { Link, useLocation } from 'react-router-dom';
 import LocalTime from './LocalTime';
+import { clamp, useScrollEffect } from '../hooks/useMotion';
+import { contactLinks, currentRole } from '../data/profile';
 
 const links = [
-  { label: 'GitHub', href: 'https://github.com/CS-Fasih' },
-  { label: 'LinkedIn', href: 'https://linkedin.com/in/muhammad-fasih-19f' },
-  { label: 'Email', href: 'mailto:muhammadfasih146@gmail.com' },
+  { label: 'GitHub', href: contactLinks.github },
+  { label: 'LinkedIn', href: contactLinks.linkedin },
+  { label: 'Email', href: `mailto:${contactLinks.email}` },
 ];
+
+// The big name slides in from the side as the footer comes into view.
+function setFooterProgress(node, viewport) {
+  const rect = node.getBoundingClientRect();
+  node.style.setProperty('--p', clamp((viewport - rect.top) / Math.max(rect.height, 1)).toFixed(3));
+}
 
 export default function Footer() {
   const location = useLocation();
   const year = new Date().getFullYear();
+  const footerRef = useScrollEffect(setFooterProgress);
 
   const backToTop = (event) => {
     if (location.pathname !== '/') return;
@@ -18,11 +27,11 @@ export default function Footer() {
   };
 
   return (
-    <footer className="footer">
+    <footer className="footer" ref={footerRef}>
       <div className="container footer__inner">
         <div className="footer__col">
           <p className="footer__name">Muhammad Fasih</p>
-          <p className="footer__muted">Research Scholar &amp; AR/VR Systems Developer, NED</p>
+          <p className="footer__muted">{currentRole.title}, {currentRole.organization}</p>
         </div>
 
         <div className="footer__col">
@@ -37,7 +46,7 @@ export default function Footer() {
             <li key={link.label}>
               <a
                 href={link.href}
-                className="text-link"
+                className="link"
                 target={link.href.startsWith('http') ? '_blank' : undefined}
                 rel={link.href.startsWith('http') ? 'noopener noreferrer' : undefined}
               >
@@ -46,15 +55,19 @@ export default function Footer() {
             </li>
           ))}
           <li>
-            <Link to="/activity" className="text-link">Activity</Link>
+            <Link to="/activity" className="link">Activity</Link>
           </li>
         </ul>
 
         <div className="footer__col footer__end">
-          <p className="footer__muted">© {year} Muhammad Fasih</p>
-          <Link to="/#home" className="text-link" onClick={backToTop}>Back to top</Link>
+          <p className="footer__muted">&copy; {year} Muhammad Fasih</p>
+          <Link to="/#home" className="link" onClick={backToTop}>Back to top</Link>
         </div>
       </div>
+
+      <p className="footer__giant" aria-hidden="true">
+        <span className="stereo" data-text="Muhammad Fasih">Muhammad Fasih</span>
+      </p>
     </footer>
   );
 }

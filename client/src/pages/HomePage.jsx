@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import Hero from '../components/Hero';
 import About from '../components/About';
@@ -9,13 +8,9 @@ import Certifications from '../components/Certifications';
 import Contact from '../components/Contact';
 import Footer from '../components/Footer';
 import Chatbot from '../components/Chatbot';
+import Cursor from '../components/Cursor';
 
 export default function HomePage() {
-  useEffect(() => {
-    document.body.classList.add('theme-dark');
-    return () => document.body.classList.remove('theme-dark');
-  }, []);
-
   return (
     <div className="site">
       <Navbar />
@@ -30,6 +25,7 @@ export default function HomePage() {
       </main>
       <Footer />
       <Chatbot />
+      <Cursor />
     </div>
   );
 }
