@@ -5,6 +5,7 @@ import Footer from '../components/Footer';
 import ActivityCard from '../components/ActivityCard';
 import ActivityFilters from '../components/ActivityFilters';
 import ScrollToTop from '../components/ScrollToTop';
+import Cursor from '../components/Cursor';
 import useDocumentMetadata from '../hooks/useDocumentMetadata';
 import { apiRequest } from '../lib/api';
 import { activityKey } from '../lib/activity';
@@ -176,9 +177,13 @@ export default function ActivityPage() {
       <main className="activity-page">
         <header className="activity-page__header">
           <div className="activity-page__header-inner">
-            <p className="activity-page__eyebrow">Updates &amp; progress</p>
-            <h1>My Activity</h1>
-            <p>Updates on what I’m building, learning, attending, and achieving.</p>
+            <p className="activity-page__eyebrow">Updates and progress</p>
+            <h1 aria-label="My Activity">
+              <span className="stereo" data-text="My Activity" aria-hidden="true">My Activity</span>
+            </h1>
+            <p className="activity-page__lead">
+              What I’m building, learning, attending and achieving, newest first.
+            </p>
           </div>
         </header>
 
@@ -257,6 +262,7 @@ export default function ActivityPage() {
       </main>
       <Footer />
       <ScrollToTop />
+      <Cursor />
     </>
   );
 }

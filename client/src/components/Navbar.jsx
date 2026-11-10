@@ -1,5 +1,6 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { contactLinks } from '../data/profile';
 
 const sections = [
   { id: 'about', label: 'About' },
@@ -12,7 +13,7 @@ const sections = [
 const scrollToSection = (sectionId, behavior = 'smooth') => {
   const section = document.getElementById(sectionId);
   if (!section) return false;
-  window.scrollTo({ top: Math.max(section.offsetTop - 64, 0), behavior });
+  window.scrollTo({ top: Math.max(section.offsetTop - 70, 0), behavior });
   return true;
 };
 
@@ -21,10 +22,16 @@ export default function Navbar() {
   const isHomePage = location.pathname === '/';
   const isActivityPage = location.pathname === '/activity';
   const menuButtonRef = useRef(null);
+  const linksRef = useRef(null);
+  const progressRef = useRef(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('');
+  const [hovered, setHovered] = useState('');
   const [scrolled, setScrolled] = useState(false);
   const [hidden, setHidden] = useState(false);
+
+  const current = isActivityPage ? 'activity' : activeSection;
+  const highlighted = hovered || current;
 
   useEffect(() => {
     document.body.classList.toggle('mobile-menu-open', menuOpen);
@@ -43,7 +50,8 @@ export default function Navbar() {
     };
   }, [menuOpen]);
 
-  // Background after the first scroll, hide while scrolling down, track the current section.
+  // Bar background after the first scroll, hide while scrolling down, page progress,
+  // and which section is on screen.
   useEffect(() => {
     let frame = 0;
     let lastY = window.scrollY;
@@ -51,20 +59,22 @@ export default function Navbar() {
     const update = () => {
       frame = 0;
       const y = window.scrollY;
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      progressRef.current?.style.setProperty('--scroll', max > 0 ? (y / max).toFixed(4) : '0');
       setScrolled(y > 12);
       if (Math.abs(y - lastY) > 6) {
-        setHidden(y > lastY && y > 400);
+        setHidden(y > lastY && y > 480);
         lastY = y;
       }
 
       if (!isHomePage) return;
       const probe = y + window.innerHeight * 0.35;
-      let current = '';
+      let next = '';
       sections.forEach((section) => {
         const node = document.getElementById(section.id);
-        if (node && node.offsetTop <= probe) current = section.id;
+        if (node && node.offsetTop <= probe) next = section.id;
       });
-      setActiveSection(current);
+      setActiveSection(next);
     };
 
     const schedule = () => {
@@ -88,6 +98,30 @@ export default function Navbar() {
     return () => window.cancelAnimationFrame(frame);
   }, [isHomePage, location.hash]);
 
+  // Slide the dark pill under whichever link is hovered or current.
+  const placeIndicator = useCallback(() => {
+    const list = linksRef.current;
+    if (!list) return;
+    const target = highlighted ? list.querySelector(`[data-nav="${highlighted}"]`) : null;
+    if (!target) {
+      list.style.setProperty('--pill-o', '0');
+      return;
+    }
+    list.style.setProperty('--pill-x', `${target.offsetLeft}px`);
+    list.style.setProperty('--pill-w', `${target.offsetWidth}px`);
+    list.style.setProperty('--pill-o', '1');
+  }, [highlighted]);
+
+  useLayoutEffect(() => {
+    placeIndicator();
+  }, [placeIndicator]);
+
+  useEffect(() => {
+    window.addEventListener('resize', placeIndicator);
+    document.fonts?.ready.then(placeIndicator).catch(() => {});
+    return () => window.removeEventListener('resize', placeIndicator);
+  }, [placeIndicator]);
+
   const handleNavClick = (event, sectionId) => {
     setMenuOpen(false);
     if (!isHomePage) return;
@@ -97,27 +131,45 @@ export default function Navbar() {
   };
 
   const navClass = [
-    'navbar',
-    scrolled || !isHomePage ? 'navbar--solid' : '',
-    hidden && !menuOpen ? 'navbar--hidden' : '',
-    menuOpen ? 'navbar--open' : '',
+    'nav',
+    scrolled || !isHomePage ? 'nav--solid' : '',
+    hidden && !menuOpen ? 'nav--hidden' : '',
+    menuOpen ? 'nav--open' : '',
   ].filter(Boolean).join(' ');
 
   return (
     <>
-      <nav className={navClass} id="navbar" aria-label="Primary navigation">
-        <div className="container navbar__inner">
-          <Link to="/#home" className="navbar__logo" onClick={(event) => handleNavClick(event, 'home')}>
-            Muhammad Fasih
+      <div className="progress" ref={progressRef} aria-hidden="true" />
+
+      <header className={navClass} id="navbar">
+        <div className="nav__bar">
+          <Link
+            to="/#home"
+            className="nav__logo"
+            aria-label="Muhammad Fasih, home"
+            onClick={(event) => handleNavClick(event, 'home')}
+          >
+            <span className="nav__mark" aria-hidden="true">MF</span>
+            <span className="nav__name">Muhammad Fasih</span>
           </Link>
 
-          <div className="navbar__links">
+          <nav
+            className="nav__links"
+            ref={linksRef}
+            aria-label="Primary navigation"
+            onMouseLeave={() => setHovered('')}
+          >
+            <span className="nav__pill" aria-hidden="true" />
             {sections.map((section) => (
               <Link
                 key={section.id}
                 to={`/#${section.id}`}
-                className={`navbar__link ${isHomePage && activeSection === section.id ? 'active' : ''}`}
+                data-nav={section.id}
+                className={`nav__link${highlighted === section.id ? ' is-on' : ''}`}
                 aria-current={isHomePage && activeSection === section.id ? 'location' : undefined}
+                onMouseEnter={() => setHovered(section.id)}
+                onFocus={() => setHovered(section.id)}
+                onBlur={() => setHovered('')}
                 onClick={(event) => handleNavClick(event, section.id)}
               >
                 {section.label}
@@ -125,56 +177,70 @@ export default function Navbar() {
             ))}
             <Link
               to="/activity"
-              className={`navbar__link ${isActivityPage ? 'active' : ''}`}
+              data-nav="activity"
+              className={`nav__link${highlighted === 'activity' ? ' is-on' : ''}`}
               aria-current={isActivityPage ? 'page' : undefined}
+              onMouseEnter={() => setHovered('activity')}
+              onFocus={() => setHovered('activity')}
+              onBlur={() => setHovered('')}
             >
               Activity
             </Link>
-          </div>
+          </nav>
+
+          <a href={`mailto:${contactLinks.email}`} className="btn btn--sm nav__cta" data-magnetic>
+            Let&rsquo;s talk
+            <svg className="btn__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M7 17 17 7M8 7h9v9" />
+            </svg>
+          </a>
 
           <button
             ref={menuButtonRef}
             type="button"
-            className="navbar__menu-button"
+            className="nav__menu"
             onClick={() => setMenuOpen((open) => !open)}
             aria-expanded={menuOpen}
             aria-controls="mobile-navigation"
           >
+            <span className="nav__menu-icon" aria-hidden="true"><i /><i /></span>
             {menuOpen ? 'Close' : 'Menu'}
           </button>
         </div>
-      </nav>
+      </header>
 
       <div
-        className={`mobile-nav ${menuOpen ? 'open' : ''}`}
+        className={`mobile-nav${menuOpen ? ' open' : ''}`}
         id="mobile-navigation"
         aria-hidden={!menuOpen}
       >
-        <nav className="container mobile-nav__inner" aria-label="Mobile navigation">
+        <nav className="mobile-nav__inner" aria-label="Mobile navigation">
           {[{ id: 'home', label: 'Home' }, ...sections].map((section, index) => (
             <Link
               key={section.id}
               to={`/#${section.id}`}
-              className={`mobile-nav__link ${isHomePage && activeSection === section.id ? 'active' : ''}`}
+              className={`mobile-nav__link${isHomePage && activeSection === section.id ? ' active' : ''}`}
               tabIndex={menuOpen ? undefined : -1}
               style={{ '--i': index }}
               onClick={(event) => handleNavClick(event, section.id)}
             >
+              <span className="mobile-nav__index" aria-hidden="true">{String(index).padStart(2, '0')}</span>
               {section.label}
             </Link>
           ))}
           <Link
             to="/activity"
-            className={`mobile-nav__link ${isActivityPage ? 'active' : ''}`}
+            className={`mobile-nav__link${isActivityPage ? ' active' : ''}`}
             tabIndex={menuOpen ? undefined : -1}
             style={{ '--i': sections.length + 1 }}
             onClick={() => setMenuOpen(false)}
           >
+            <span className="mobile-nav__index" aria-hidden="true">{String(sections.length + 1).padStart(2, '0')}</span>
             Activity
           </Link>
           <p className="mobile-nav__foot" style={{ '--i': sections.length + 2 }}>
-            <a href="mailto:muhammadfasih146@gmail.com" tabIndex={menuOpen ? undefined : -1}>
-              muhammadfasih146@gmail.com
+            <a href={`mailto:${contactLinks.email}`} tabIndex={menuOpen ? undefined : -1}>
+              {contactLinks.email}
             </a>
           </p>
         </nav>

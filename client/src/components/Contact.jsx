@@ -1,5 +1,8 @@
 import { useState } from 'react';
 import useScrollReveal from '../hooks/useScrollReveal';
+import SectionHead from './SectionHead';
+import Marquee from './Marquee';
+import { contactLinks } from '../data/profile';
 
 const EMPTY_FORM = { name: '', email: '', subject: '', message: '', website: '' };
 
@@ -56,46 +59,48 @@ export default function Contact() {
 
   return (
     <section className="section contact" id="contact" ref={sectionRef}>
-      <div className="container">
-        <header className="section-head reveal">
-          <h2>Contact</h2>
-          <p className="section-head__note">Karachi time, UTC+5</p>
-        </header>
+      <Marquee items={['Research', 'Extended reality', 'Software', 'Open to work']} variant="outline" reverse />
 
-        <div className="contact__lead reveal">
-          <p className="contact__prompt">For research, XR or software work, email is best:</p>
-          <a href="mailto:muhammadfasih146@gmail.com" className="contact__email">
-            muhammadfasih146@gmail.com
-          </a>
-        </div>
+      <div className="container">
+        <SectionHead index="06" title="Contact" note="Karachi time, UTC+5" />
 
         <div className="contact__grid">
-          <dl className="contact__details reveal">
-            <div>
-              <dt>Phone</dt>
-              <dd><a href="tel:+923710236798" className="text-link">+92 371 0236798</a></dd>
-            </div>
-            <div>
-              <dt>LinkedIn</dt>
-              <dd>
-                <a href="https://linkedin.com/in/muhammad-fasih-19f" target="_blank" rel="noopener noreferrer" className="text-link">
-                  muhammad-fasih-19f
-                </a>
-              </dd>
-            </div>
-            <div>
-              <dt>GitHub</dt>
-              <dd>
-                <a href="https://github.com/CS-Fasih" target="_blank" rel="noopener noreferrer" className="text-link">
-                  CS-Fasih
-                </a>
-              </dd>
-            </div>
-            <div>
-              <dt>Based in</dt>
-              <dd>Karachi, Pakistan</dd>
-            </div>
-          </dl>
+          <div className="contact__panel reveal">
+            <p className="contact__prompt">For research, XR or software work, email is best.</p>
+            <a href={`mailto:${contactLinks.email}`} className="contact__email">
+              <span>{contactLinks.email}</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M7 17 17 7M8 7h9v9" />
+              </svg>
+            </a>
+
+            <dl className="contact__details">
+              <div>
+                <dt>Phone</dt>
+                <dd><a href={contactLinks.phoneHref}>{contactLinks.phone}</a></dd>
+              </div>
+              <div>
+                <dt>LinkedIn</dt>
+                <dd>
+                  <a href={contactLinks.linkedin} target="_blank" rel="noopener noreferrer">
+                    {contactLinks.linkedinLabel}
+                  </a>
+                </dd>
+              </div>
+              <div>
+                <dt>GitHub</dt>
+                <dd>
+                  <a href={contactLinks.github} target="_blank" rel="noopener noreferrer">
+                    {contactLinks.githubLabel}
+                  </a>
+                </dd>
+              </div>
+              <div>
+                <dt>Based in</dt>
+                <dd>Karachi, Pakistan</dd>
+              </div>
+            </dl>
+          </div>
 
           <form className="form reveal" onSubmit={handleSubmit}>
             <p className="form__title">Or leave a message here</p>
@@ -132,8 +137,11 @@ export default function Contact() {
             </label>
 
             <div className="form__footer">
-              <button type="submit" className="button" disabled={loading}>
+              <button type="submit" className="btn btn--red" disabled={loading}>
                 {loading ? 'Sending' : 'Send message'}
+                <svg className="btn__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M7 17 17 7M8 7h9v9" />
+                </svg>
               </button>
               <p className={`form__status ${statusType ? `is-${statusType}` : ''}`} role="status" aria-live="polite">
                 {status}

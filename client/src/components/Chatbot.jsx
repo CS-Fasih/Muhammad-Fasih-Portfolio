@@ -170,8 +170,10 @@ export default function Chatbot() {
         {/* Header */}
         <div className="chatbot-header">
           <div className="chatbot-header__info">
-            <span className="chatbot-header__title" style={{ fontSize: '15px', fontWeight: '600', letterSpacing: '0.5px' }}>
-              Ask my Assistant
+            <span className="chatbot-header__avatar" aria-hidden="true">MF</span>
+            <span>
+              <span className="chatbot-header__title">Ask my assistant</span>
+              <span className="chatbot-header__status">Answers questions about my work</span>
             </span>
           </div>
           <button

@@ -12,6 +12,38 @@ export const heroFacts = [
   { label: 'Education', value: 'BS Computer Science', detail: 'DUET Karachi, 2026' },
 ];
 
+// Finishes the sentence "I build ..." in the hero, one phrase at a time.
+export const buildList = [
+  'AR/VR systems',
+  'computer vision models',
+  'Linux security tools',
+  'full-stack web apps',
+];
+
+// The scrolling band under the hero.
+export const marqueeItems = [
+  'AR / VR systems',
+  'Computer vision',
+  'WorldViz Vizard',
+  'PyTorch',
+  'Linux and C',
+  'React',
+  'FastAPI',
+  'Blender',
+  'Unity',
+];
+
+export const contactLinks = {
+  email: 'muhammadfasih146@gmail.com',
+  phone: '+92 371 0236798',
+  phoneHref: 'tel:+923710236798',
+  linkedin: 'https://linkedin.com/in/muhammad-fasih-19f',
+  linkedinLabel: 'muhammad-fasih-19f',
+  github: 'https://github.com/CS-Fasih',
+  githubLabel: 'CS-Fasih',
+  resume: '/Muhammad_Fasih_Resume.pdf',
+};
+
 export const aboutText =
   "I'm a software engineer from Karachi. Most of my recent work is in extended reality. At AIDL I built VR and AR simulations with WorldViz Vizard and Python, and since November 2026 I have been researching and developing AR/VR systems at NED. Before that I worked mostly on computer vision, Linux security tools and full-stack web apps.";
 
@@ -25,6 +57,7 @@ export const numbers = [
 export const experience = [
   {
     id: 'ned',
+    kind: 'Research',
     role: 'Research Scholar & AR/VR Systems Developer',
     organization: 'NED',
     location: 'Karachi',
@@ -36,6 +69,7 @@ export const experience = [
   },
   {
     id: 'aidl',
+    kind: 'Work',
     role: 'XR Engineer',
     organization: 'AIDL (Associated Instrument Distributors)',
     location: 'Karachi',
@@ -51,6 +85,7 @@ export const experience = [
   },
   {
     id: 'duet',
+    kind: 'Education',
     role: 'BS Computer Science',
     organization: 'Dawood University of Engineering & Technology',
     location: 'Karachi',

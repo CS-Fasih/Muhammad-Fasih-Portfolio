@@ -1,6 +1,6 @@
 # Muhammad Fasih — Portfolio
 
-A responsive React portfolio with an editorial dark design: one typeface, hairline rules, a single red accent, a live point-cloud figure, and hand-drawn SVG diagrams for each featured project. The site includes the original single-page portfolio, a public activity feed, a private activity dashboard, serverless API routes, MongoDB Atlas persistence, signed Cloudinary image uploads, and the existing portfolio chatbot.
+A responsive React portfolio with a light, motion-heavy design: large condensed type, a red and cyan stereo (3D glasses) motif, a live point cloud that orbits the portrait, stacking project cards, and hand-drawn SVG diagrams for each featured project. The site includes the original single-page portfolio, a public activity feed, a private activity dashboard, serverless API routes, MongoDB Atlas persistence, signed Cloudinary image uploads, and the existing portfolio chatbot.
 
 **Live:** [muhammadfasih.vercel.app](https://muhammadfasih.vercel.app)
 
@@ -175,14 +175,28 @@ Vercel rewrites non-API browser routes to the React entry point while keeping `/
 │   └── src/
 │       ├── components/  # Shared and activity UI
 │       ├── data/        # Homepage content (profile.js, projects.js, otherProjects.js, certifications.js)
-│       ├── styles/      # portfolio.css: homepage, navbar, and footer design system
+│       ├── hooks/       # Scroll reveal, pointer and scroll-linked motion helpers
+│       ├── styles/      # portfolio.css (homepage, navbar, footer), chat.css, activity.css, admin.css
 │       ├── pages/       # Home, activity, login, and admin pages
-│       └── index.css    # Base tokens, chatbot, activity, and admin styles
+│       └── index.css    # Design tokens, reset, and shared buttons
 ├── lib/                 # Database, authentication, validation, Cloudinary
 ├── models/              # Mongoose models
+├── resume/              # LaTeX source and PDF of the resume
 ├── .env.example         # Placeholder server environment variables
 └── vercel.json          # Build, headers, API, and SPA route handling
 ```
+
+## Resume
+
+The resume is written in LaTeX at `resume/Muhammad_Fasih_Resume.tex`. Rebuild it with:
+
+```bash
+cd resume
+pdflatex Muhammad_Fasih_Resume.tex
+cp Muhammad_Fasih_Resume.pdf ../client/public/Muhammad_Fasih_Resume.pdf
+```
+
+The site links to `client/public/Muhammad_Fasih_Resume.pdf`, so copy the new PDF there after each change.
 
 ## Author
 

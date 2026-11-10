@@ -13,7 +13,7 @@ export default function ActivityFilters({ selected, onChange, disabled = false }
               onClick={() => onChange(value)}
               disabled={disabled}
             >
-              {label.toUpperCase()}
+              {label}
             </button>
           </li>
         ))}
